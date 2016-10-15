@@ -25,6 +25,7 @@ f.write('with augmented data; no sigmoid; dropout on fc1 \n')
 loader = DensityLoader()
 
 # Parameters
+#test
 #learning_rate= 0.0001
 learning_rate = 0.0001
 training_iters= 20000000
