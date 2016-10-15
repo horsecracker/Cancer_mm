@@ -76,7 +76,7 @@ def maxpool2d(x, k=2):
 
 
 # Create model
-def conv_net(x, weights, scale, beta, biases, dropout):
+def conv_BN_net(x, weights, scale, beta, biases, dropout):
 
     # Convolution Layer
     conv1 = conv2d_BN(x, weights['wc1'], scale['sc1'], beta['bt1'])
@@ -155,7 +155,7 @@ biases = {
 
 # Construct model
 print('constructing model')
-log,pred = conv_net(x, weights, scale, beta, biases, dropout)
+log,pred = conv_BN_net(x, weights, scale, beta, biases, dropout)
 
 # Define loss and optimizer
 #cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(log, y))
@@ -178,8 +178,8 @@ test_writer = tf.train.SummaryWriter(test_log)
 
 # Initializing the variables
 init = tf.initialize_all_variables()
-
 saver=tf.train.Saver()
+
 # Launch the graph
 print('launch graph')
 with tf.Session() as sess:
@@ -226,7 +226,7 @@ with tf.Session() as sess:
 		#print(y_true.shape)
     		#print (confu_m)
  		confusion_m_all.append(confu_m)
-                test_writer.add_summary(summary,step)
+                test_writer.add_summary(summary,step*test_steps+test_step)
 	    print("Test Accuracy: {} \n".format(test_acc_sum/test_steps))
             confusion_m_average=np.sum(confusion_m_all, axis=0)
 	    #if step% 5000==1:
@@ -236,6 +236,10 @@ with tf.Session() as sess:
  	    f.write(str(confusion_m_average))
  	    #f.close
 
+        if step % (display_step*2) == 1:
+            print('at step' +str(step) )
+            save_path=saver.save(sess,save_model_name)
+
         step += 1
-    save_path=saver.save(sess,save_model_name)
+
     f.close()
