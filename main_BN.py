@@ -14,13 +14,13 @@ from utils import *
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-train_log='../tensorboard_out/density_train_log-trim'
-test_log='../tensorboard_out/density_test_log-trim'
-save_model_name='../density_trim.ckpt'
+train_log='../tensorboard_out/density_train_log-BN'
+test_log='../tensorboard_out/density_test_log-BN'
+save_model_name='../density_BN.ckpt'
 
-logfile='../logfile/log_trim.txt'
+logfile='../logfile/log_BN.txt'
 f=open(logfile, 'a+')
-f.write('Model using Batch Normalization \n')
+f.write('Model using Batch Normalization, data with whitenning \n')
 
 loader = DensityLoader()
 
