@@ -14,15 +14,14 @@ from utils import *
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-train_log='../tensorboard_out/density_train_log-BN'
-test_log='../tensorboard_out/density_test_log-BN'
-save_model_name='../density_BN.ckpt'
+train_log='../tensorboard_out/density_train_log-orginal'
+test_log='../tensorboard_out/density_test_log-orignal'
+save_model_name='../density_orginal'
 
-logfile='../logfile/log_BN.txt'
+logfile='../logfile/log_orginal_dropout.txt'
 f=open(logfile, 'a+')
-f.write('Model using Batch Normalization, data with whitenning \n')
+f.write('Model using correct dropout, data with whitenning \n')
 
-loader = DensityLoader()
 
 # Parameters
 #learning_rate= 0.0001
@@ -52,7 +51,7 @@ keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
 
 		
 # Create some wrappers for simplicity
-
+'''
 def conv2d_BN(x, W, scale, beta, strides=1):
     # Conv2D wrapper, with bias and relu activation
     x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME', name='conv')
@@ -62,12 +61,13 @@ def conv2d_BN(x, W, scale, beta, strides=1):
     #beta2 = tf.Variable(tf.zeros([100]))
     BN = tf.nn.batch_normalization(x,batch_mean,batch_var,beta,scale,epsilon, name='batch_norm')
     return tf.nn.sigmoid(BN, name='sigmoind_act')
-    
+'''
+
 def conv2d(x, W, b, strides=1):
     # Conv2D wrapper, with bias and relu activation
-    x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME')
+    x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME', name='conv')
     x = tf.nn.bias_add(x, b)
-    return tf.nn.relu(x)
+    return tf.nn.relu(x, name='relu')
 
 
 def maxpool2d(x, k=2):
@@ -77,29 +77,29 @@ def maxpool2d(x, k=2):
 
 
 # Create model
-def conv_BN_net(x, weights, scale, beta, biases, keep_prob):
+def conv_net(x, weights, biases, keep_prob):
 
     # Convolution Layer
     
     with tf.variable_scope('conv1') as scope:
 
-        conv1 = conv2d_BN(x, weights['wc1'], scale['sc1'], beta['bt1'] )
+        conv1 = conv2d(x, weights['wc1'], biases['bc1'])
         # Max Pooling (down-sampling)
         conv1 = maxpool2d(conv1, k=2)
 
     with tf.variable_scope('conv2') as scope:
         # Convolution Layer
-        conv2 = conv2d_BN(conv1, weights['wc2'],scale['sc2'], beta['bt2'] )
+        conv2 = conv2d(conv1, weights['wc2'],biases['bc2'])
         # Max Pooling (down-sampling)
         conv2 = maxpool2d(conv2, k=2)
 
     with tf.variable_scope('conv3') as scope:
-        conv3 = conv2d_BN(conv2, weights['wc3'], scale['sc3'], beta['bt3'])
+        conv3 = conv2d(conv2, weights['wc3'], biases['bc3'])
         # Max Pooling (down-sampling)
         conv3 = maxpool2d(conv3, k=2)
 
     with tf.variable_scope('conv4') as scope:
-        conv4 = conv2d_BN(conv3, weights['wc4'], scale['sc4'], beta['bt4'])
+        conv4 = conv2d(conv3, weights['wc4'], biases['bc4'])
         # Max Pooling (down-sampling)
         conv4 = maxpool2d(conv4, k=2)
     #conv4=tf.nn.dropout(conv4,dropout)
@@ -123,45 +123,34 @@ def conv_BN_net(x, weights, scale, beta, biases, keep_prob):
 # Store layers weight & bias
 weights = {
     # 5x5 conv, 1 input, 32 outputs
-    'wc1': tf.Variable(tf.random_normal([5, 5, 1, 32],  stddev=5e-2)),
+    'wc1': tf.Variable(tf.random_normal([5, 5, 1, 32],  stddev=1e-2)),
     # 5x5 conv, 32 inputs, 64 outputs
     'wc2': tf.Variable(tf.random_normal([5, 5, 32, 64],  stddev=5e-2)),
     # 5x5 conv, 64 inputs, 128 outputs
-    'wc3': tf.Variable(tf.random_normal([5, 5, 64, 128], stddev=0.1)),
+    'wc3': tf.Variable(tf.random_normal([5, 5, 64, 128], stddev=5e-2)),
     # 5x5 conv, 128 inputs, 256 outputs
-    'wc4': tf.Variable(tf.random_normal([5, 5, 128, 256],  stddev=0.1)),
+    'wc4': tf.Variable(tf.random_normal([5, 5, 128, 256],  stddev=5e-2)),
     # fully connected, 7*7*64 inputs, 1024 outputs
     'wd1': tf.Variable(tf.random_normal([(img_size/16)*(img_size/16)*256, 1024])),
     # 1024 inputs, 10 outputs (class prediction)
     'out': tf.Variable(tf.random_normal([1024, n_classes]))
 }
 
-scale = {
-    'sc1': tf.Variable(tf.ones([32])),
-    'sc2': tf.Variable(tf.ones([64])),
-    'sc3': tf.Variable(tf.ones([128])),
-    'sc4': tf.Variable(tf.ones([256])),
-    #'sd1': tf.Variable(tf.zeros([1024])),
-    #'out': tf.Variable(tf.zeros([n_classes]))
-}
 
-beta = {
-    'bt1': tf.Variable(tf.zeros([32])),
-    'bt2': tf.Variable(tf.zeros([64])),
-    'bt3': tf.Variable(tf.zeros([128])),
-    'bt4': tf.Variable(tf.zeros([256])),
-    #'bd1': tf.Variable(tf.zeros([1024])),
-    #'out': tf.Variable(tf.zeros([n_classes]))
-}
-
-biases = { 
+biases = {
+    'bc1': tf.Variable(tf.zeros([32])),
+    'bc2': tf.Variable(tf.zeros([64])),
+    'bc3': tf.Variable(tf.zeros([128])),
+    'bc4': tf.Variable(tf.zeros([256])),
     'bd1': tf.Variable(tf.zeros([1024])),
     'out': tf.Variable(tf.zeros([n_classes]))
-    }
+}
+
+
 
 # Construct model
 print('constructing model')
-log,pred = conv_BN_net(x, weights, scale, beta, biases, keep_prob)
+log,pred = conv_net(x, weights, biases, keep_prob)
 
 # Define loss and optimizer
 #cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(log, y))
@@ -174,7 +163,6 @@ optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32))
 tf.scalar_summary('accuracy',accuracy)
-confusion_m_all=[]
 
 #merge all summaries and define write location
 merged = tf.merge_all_summaries()
@@ -186,6 +174,8 @@ test_writer = tf.train.SummaryWriter(test_log)
 init = tf.initialize_all_variables()
 saver=tf.train.Saver()
 
+loader = DensityLoader()
+confusion_m_all=[]
 # Launch the graph
 print('launch graph')
 with tf.Session() as sess:
@@ -243,8 +233,8 @@ with tf.Session() as sess:
  	    #f.close
 
         if step % (savemodel_step) == 1:
-            print('at step' +str(step) + 'model saved. ' )
-            save_path=saver.save(sess,save_model_name)
+            print('at step ' +str(step) + ' model saved. ' )
+            save_path=saver.save(sess,save_model_name+'-'+str(step)+'.ckpt')
 
         step += 1
 
