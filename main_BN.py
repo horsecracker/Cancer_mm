@@ -110,7 +110,8 @@ def conv_BN_net(x, weights, scale, beta, biases, dropout):
     fc1 = tf.add(tf.matmul(fc1, weights['wd1']), biases['bd1'],name='fc1_pre_relue')
     fc1 = tf.nn.relu(fc1, name='fc_relu')
     # Apply Dropout
-    fc1 = tf.nn.dropout(fc1, dropout,name='fc1_dropout')
+    #fc1 = tf.nn.dropout(fc1, dropout,name='fc1_dropout')
+    fc1 = tf.nn.dropout(fc1, keep_prob ,name='fc1_dropout')
 
     #fc1=tf.nn.sigmoid(fc1)
 
