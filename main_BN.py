@@ -30,6 +30,7 @@ learning_rate = 0.0001
 training_iters= 20000000
 batch_size = 64
 display_step = 20
+savemodel_step = 2000
 
 # Network Parameters
 img_size = 256
@@ -79,39 +80,39 @@ def maxpool2d(x, k=2):
 def conv_BN_net(x, weights, scale, beta, biases, dropout):
 
     # Convolution Layer
-    conv1 = conv2d_BN(x, weights['wc1'], scale['sc1'], beta['bt1'])
+    conv1 = conv2d_BN(x, weights['wc1'], scale['sc1'], beta['bt1'], name='conv1')
     # Max Pooling (down-sampling)
-    conv1 = maxpool2d(conv1, k=2)
+    conv1 = maxpool2d(conv1, k=2, name='pool1')
     
     # Convolution Layer
-    conv2 = conv2d_BN(conv1, weights['wc2'],scale['sc2'], beta['bt2'])
+    conv2 = conv2d_BN(conv1, weights['wc2'],scale['sc2'], beta['bt2'], name='conv2')
     # Max Pooling (down-sampling)
     
-    conv2 = maxpool2d(conv2, k=2)
+    conv2 = maxpool2d(conv2, k=2,name='pool2')
 
-    conv3 = conv2d_BN(conv2, weights['wc3'], scale['sc3'], beta['bt3'])
+    conv3 = conv2d_BN(conv2, weights['wc3'], scale['sc3'], beta['bt3'],name='conv3')
     # Max Pooling (down-sampling)
-    conv3 = maxpool2d(conv3, k=2)
+    conv3 = maxpool2d(conv3, k=2,name='pool3')
 
 
-    conv4 = conv2d_BN(conv3, weights['wc4'], scale['sc4'], beta['bt4'])
+    conv4 = conv2d_BN(conv3, weights['wc4'], scale['sc4'], beta['bt4'],name='conv4')
     # Max Pooling (down-sampling)
-    conv4 = maxpool2d(conv4, k=2)
+    conv4 = maxpool2d(conv4, k=2,name='pool4')
     #conv4=tf.nn.dropout(conv4,dropout)
 
     # Fully connected layer
     # Reshape conv2 output to fit fully connected layer input
-    fc1 = tf.reshape(conv4, [-1, weights['wd1'].get_shape().as_list()[0]])
-    fc1 = tf.add(tf.matmul(fc1, weights['wd1']), biases['bd1'])
-    fc1 = tf.nn.relu(fc1)
+    fc1 = tf.reshape(conv4, [-1, weights['wd1'].get_shape().as_list()[0]], name='fc1_input')
+    fc1 = tf.add(tf.matmul(fc1, weights['wd1']), biases['bd1'],name='fc1_pre_relue')
+    fc1 = tf.nn.relu(fc1, name='fc_relu')
     # Apply Dropout
-    fc1 = tf.nn.dropout(fc1, dropout)
+    fc1 = tf.nn.dropout(fc1, dropout,name='fc1_dropout')
 
     #fc1=tf.nn.sigmoid(fc1)
 
     # Output, class prediction
-    logits = tf.add(tf.matmul(fc1, weights['out']), biases['out'])
-    out = tf.nn.softmax(logits)
+    logits = tf.add(tf.matmul(fc1, weights['out']), biases['out'], name='out_logits')
+    out = tf.nn.softmax(logits,name='out_softmax')
     return logits,out
 
 # Store layers weight & bias
@@ -160,7 +161,7 @@ log,pred = conv_BN_net(x, weights, scale, beta, biases, dropout)
 # Define loss and optimizer
 #cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(log, y))
 # Define loss and optimizer
-cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(log, y))
+cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(log, y),name='cross_entropy')
 tf.scalar_summary('cross entropy cost',cost)
 optimizer = tf.train.AdamOptimizer(learning_rate=learning_rate).minimize(cost)
 
@@ -236,8 +237,8 @@ with tf.Session() as sess:
  	    f.write(str(confusion_m_average))
  	    #f.close
 
-        if step % (display_step*2) == 1:
-            print('at step' +str(step) )
+        if step % (savemodel_step) == 1:
+            print('at step' +str(step) + 'model saved. ' )
             save_path=saver.save(sess,save_model_name)
 
         step += 1
