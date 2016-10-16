@@ -55,13 +55,13 @@ keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
 
 def conv2d_BN(x, W, scale, beta, strides=1):
     # Conv2D wrapper, with bias and relu activation
-    x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME')
+    x = tf.nn.conv2d(x, W, strides=[1, strides, strides, 1], padding='SAME', name='conv')
     #x = tf.nn.bias_add(x, b)
     batch_mean, batch_var = tf.nn.moments(x,[0,1,2])
     #scale2 = tf.Variable(tf.ones([100]))
     #beta2 = tf.Variable(tf.zeros([100]))
-    BN = tf.nn.batch_normalization(x,batch_mean,batch_var,beta,scale,epsilon)
-    return tf.nn.sigmoid(BN)
+    BN = tf.nn.batch_normalization(x,batch_mean,batch_var,beta,scale,epsilon, name='batch_norm')
+    return tf.nn.sigmoid(BN, name='sigmoind_act')
     
 def conv2d(x, W, b, strides=1):
     # Conv2D wrapper, with bias and relu activation
@@ -73,31 +73,35 @@ def conv2d(x, W, b, strides=1):
 def maxpool2d(x, k=2):
     # MaxPool2D wrapper
     return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1],
-                          padding='SAME')
+                          padding='SAME',name='pool')
 
 
 # Create model
 def conv_BN_net(x, weights, scale, beta, biases, dropout):
 
     # Convolution Layer
-    conv1 = conv2d_BN(x, weights['wc1'], scale['sc1'], beta['bt1'], name='conv1')
-    # Max Pooling (down-sampling)
-    conv1 = maxpool2d(conv1, k=2, name='pool1')
     
-    # Convolution Layer
-    conv2 = conv2d_BN(conv1, weights['wc2'],scale['sc2'], beta['bt2'], name='conv2')
-    # Max Pooling (down-sampling)
-    
-    conv2 = maxpool2d(conv2, k=2,name='pool2')
+    with tf.variable_scope('conv1') as scope:
 
-    conv3 = conv2d_BN(conv2, weights['wc3'], scale['sc3'], beta['bt3'],name='conv3')
-    # Max Pooling (down-sampling)
-    conv3 = maxpool2d(conv3, k=2,name='pool3')
+        conv1 = conv2d_BN(x, weights['wc1'], scale['sc1'], beta['bt1'] )
+        # Max Pooling (down-sampling)
+        conv1 = maxpool2d(conv1, k=2)
 
+    with tf.variable_scope('conv2') as scope:
+        # Convolution Layer
+        conv2 = conv2d_BN(conv1, weights['wc2'],scale['sc2'], beta['bt2'] )
+        # Max Pooling (down-sampling)
+        conv2 = maxpool2d(conv2, k=2)
 
-    conv4 = conv2d_BN(conv3, weights['wc4'], scale['sc4'], beta['bt4'],name='conv4')
-    # Max Pooling (down-sampling)
-    conv4 = maxpool2d(conv4, k=2,name='pool4')
+    with tf.variable_scope('conv3') as scope:
+        conv3 = conv2d_BN(conv2, weights['wc3'], scale['sc3'], beta['bt3'])
+        # Max Pooling (down-sampling)
+        conv3 = maxpool2d(conv3, k=2)
+
+    with tf.variable_scope('conv4') as scope:
+        conv4 = conv2d_BN(conv3, weights['wc4'], scale['sc4'], beta['bt4'])
+        # Max Pooling (down-sampling)
+        conv4 = maxpool2d(conv4, k=2)
     #conv4=tf.nn.dropout(conv4,dropout)
 
     # Fully connected layer
