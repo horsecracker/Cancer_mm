@@ -14,18 +14,18 @@ from utils import *
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-train_log='../tensorboard_out/density_train_log-orginal'
-test_log='../tensorboard_out/density_test_log-orignal'
-save_model_name='../density_orginal'
+train_log='../tensorboard_out/density_train_log-orginal3'
+test_log='../tensorboard_out/density_test_log-orignal3'
+save_model_name='../checkpoint_file/density_orginal2'
 
-logfile='../logfile/log_orginal_dropout.txt'
+logfile='../logfile/log_orginal_dropout3.txt'
 f=open(logfile, 'a+')
-f.write('Model using correct dropout, data with whitenning \n')
+f.write('0.01, 0.1 sttdev initialization of weight, data with whitenning \n')
 
 
 # Parameters
 #learning_rate= 0.0001
-learning_rate = 0.0001
+learning_rate = 0.00005
 training_iters= 20000000
 batch_size = 64
 display_step = 20
@@ -36,7 +36,7 @@ img_size = 256
 n_input = img_size*img_size # data input
 n_classes = 4 # total classes (0-3)
 #dropout = 0.75 # Dropout, probability to keep units
-dropout = 0.75
+dropout = 0.6
 epsilon = 1e-3
 
 ####### logfile for hyperparameter and output check #########
@@ -125,15 +125,15 @@ weights = {
     # 5x5 conv, 1 input, 32 outputs
     'wc1': tf.Variable(tf.random_normal([5, 5, 1, 32],  stddev=1e-2)),
     # 5x5 conv, 32 inputs, 64 outputs
-    'wc2': tf.Variable(tf.random_normal([5, 5, 32, 64],  stddev=5e-2)),
+    'wc2': tf.Variable(tf.random_normal([5, 5, 32, 64],  stddev=1e-2)),
     # 5x5 conv, 64 inputs, 128 outputs
-    'wc3': tf.Variable(tf.random_normal([5, 5, 64, 128], stddev=5e-2)),
+    'wc3': tf.Variable(tf.random_normal([5, 5, 64, 128], stddev=1e-2)),
     # 5x5 conv, 128 inputs, 256 outputs
-    'wc4': tf.Variable(tf.random_normal([5, 5, 128, 256],  stddev=5e-2)),
+    'wc4': tf.Variable(tf.random_normal([5, 5, 128, 256],  stddev=1e-2)),
     # fully connected, 7*7*64 inputs, 1024 outputs
-    'wd1': tf.Variable(tf.random_normal([(img_size/16)*(img_size/16)*256, 1024])),
+    'wd1': tf.Variable(tf.random_normal([(img_size/16)*(img_size/16)*256, 1024],stddev= 1e-2)),
     # 1024 inputs, 10 outputs (class prediction)
-    'out': tf.Variable(tf.random_normal([1024, n_classes]))
+    'out': tf.Variable(tf.random_normal([1024, n_classes],stddev = 1e-1))
 }
 
 
