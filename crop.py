@@ -11,7 +11,7 @@ def crop_to_max_square(img_file, outfile, target_square_length):
     im = im.crop(crop_rect)
     target_size = (target_square_length, target_square_length)
     im.thumbnail(target_size)
-    im.save.convert("RGB")),(outfile, "JPEG")
+    im.convert("RGB").save(outfile, "JPEG")
 
 def crop_all_images_to_max_square(image_dir, target_size):
     dir_path = os.path.dirname(os.path.realpath(__file__))
