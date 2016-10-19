@@ -14,7 +14,7 @@ class DensityLoader(object):
         print(self.train_labels[0:])
         self.test_data, self.test_labels = load_density_data('../birads_dataset/dev-256/')
 
-        self.n_classes = len(CLASSES.keys())
+        self.n_classes = len(set(CLASSES.values()))
         
         self.num = self.train_data.shape[0]
         self.h = 256
@@ -25,7 +25,7 @@ class DensityLoader(object):
         
     def next_batch(self, batch_size):
         images_batch = np.zeros((batch_size, self.h, self.w, self.c)) 
-        labels_batch = np.zeros((batch_size, 4))
+        labels_batch = np.zeros((batch_size, self.n_classes))
         for i in range(batch_size):
             images_batch[i, ...] = self.train_data[self._idx].reshape((self.h, self.w, self.c))
             labels_batch[i, ...] = self.train_labels[self._idx]
@@ -40,7 +40,7 @@ class DensityLoader(object):
         return images_batch, labels_batch
     
     def load_test(self):
-        return self.test_data.reshape((-1, self.h, self.w, self.c)), self.test_labels
+        return self.test_data.reshape((-1, self.h, self.w, self.c)), self.test_label
 
 
 def load_density_data(data_path):
