@@ -14,11 +14,11 @@ from utils_birads import *
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-train_log='../tensorboard_out/birads_train_log'
-test_log='../tensorboard_out/birads_test_log'
-save_model_name='../checkpoint_file/birads_1'
+train_log='../tensorboard_out/birads_train_log_cam'
+test_log='../tensorboard_out/birads_test_log_cam'
+save_model_name='../checkpoint_file/birads_cam'
 
-logfile='../logfile/log_birads.txt'
+logfile='../logfile/log_birads_cam.txt'
 f=open(logfile, 'a+')
 f.write('0.01, 0.1 sttdev initialization of weight, data with whitenning \n')
 
@@ -36,7 +36,7 @@ img_size = 256
 n_input = img_size*img_size # data input
 n_classes = 2 # total classes (0-3)
 #dropout = 0.75 # Dropout, probability to keep units
-dropout = 0.6
+dropout = 0.75
 epsilon = 1e-3
 
 ####### logfile for hyperparameter and output check #########
@@ -74,6 +74,10 @@ def maxpool2d(x, k=2):
     return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1],
                           padding='SAME',name='pool')
 
+def campool2d(input_, output_dim):
+    # MaxPool2D wrapper
+    return tf.nn.max_pool(x, ksize=[1, k, k, 1], strides=[1, k, k, 1],
+                          padding='SAME',name='pool')
 
 # Create model
 def conv_net(x, weights, biases, keep_prob):
@@ -88,64 +92,40 @@ def conv_net(x, weights, biases, keep_prob):
 
     with tf.variable_scope('conv2') as scope:
         # Convolution Layer
-        conv2 = conv2d(conv1, weights['wc2'],biases['bc2'])
+        conv2 = conv2d(conv1, 64)
         # Max Pooling (down-sampling)
         conv2 = maxpool2d(conv2, k=2)
 
     with tf.variable_scope('conv3') as scope:
-        conv3 = conv2d(conv2, weights['wc3'], biases['bc3'])
+        conv3 = conv2d(conv2, 128)
         # Max Pooling (down-sampling)
         conv3 = maxpool2d(conv3, k=2)
 
     with tf.variable_scope('conv4') as scope:
-        conv4 = conv2d(conv3, weights['wc4'], biases['bc4'])
+        conv4 = conv2d(conv3, 246)
         # Max Pooling (down-sampling)
         conv4 = maxpool2d(conv4, k=2)
     #conv4=tf.nn.dropout(conv4,dropout)
 
-    # Fully connected layer
-    # Reshape conv2 output to fit fully connected layer input
-    fc1 = tf.reshape(conv4, [-1, weights['wd1'].get_shape().as_list()[0]], name='fc1_input')
-    fc1 = tf.add(tf.matmul(fc1, weights['wd1']), biases['bd1'],name='fc1_pre_relue')
-    fc1 = tf.nn.relu(fc1, name='fc_relu')
-    # Apply Dropout
-    #fc1 = tf.nn.dropout(fc1, dropout,name='fc1_dropout')
-    fc1 = tf.nn.dropout(fc1, keep_prob ,name='fc1_dropout')
+    with tf.variable_scope('conv5') as scope:
+        conv5 = conv2d(conv3, 512, k_h=3, k_w=3)
+        # Max Pooling (down-sampling)
+        conv5 = maxpool2d(conv4, k=2)
 
-    #fc1=tf.nn.sigmoid(fc1)
 
-    # Output, class prediction
-    logits = tf.add(tf.matmul(fc1, weights['out']), biases['out'], name='out_logits')
-    out = tf.nn.softmax(logits,name='out_softmax')
+    with tf.variable_scope("GAP"):
+        gap = tf.reduce_mean( conv5, [1,2], 'input')
+        gap =  tf.nn.dropout(gap, keep_prob ,name='dropout')
+
+    with tf.variable_scope('output')
+        gap_w = tf.get_variable(
+                    "W",
+                    shape=[1024, n_classes],
+                    initializer=tf.random_normal_initializer(0., 0.01))
+        logits=  tf.matmul( gap, gap_w, name='logits')
+        out = tf.nn.softmax(logits,name='softmax')
+
     return logits,out
-
-# Store layers weight & bias
-weights = {
-    # 5x5 conv, 1 input, 32 outputs
-    'wc1': tf.Variable(tf.random_normal([5, 5, 1, 32],  stddev=1e-2)),
-    # 5x5 conv, 32 inputs, 64 outputs
-    'wc2': tf.Variable(tf.random_normal([5, 5, 32, 64],  stddev=1e-2)),
-    # 5x5 conv, 64 inputs, 128 outputs
-    'wc3': tf.Variable(tf.random_normal([5, 5, 64, 128], stddev=1e-2)),
-    # 5x5 conv, 128 inputs, 256 outputs
-    'wc4': tf.Variable(tf.random_normal([5, 5, 128, 256],  stddev=1e-2)),
-    # fully connected, 7*7*64 inputs, 1024 outputs
-    'wd1': tf.Variable(tf.random_normal([(img_size/16)*(img_size/16)*256, 1024],stddev= 1e-2)),
-    # 1024 inputs, 10 outputs (class prediction)
-    'out': tf.Variable(tf.random_normal([1024, n_classes],stddev = 1e-1))
-}
-
-
-biases = {
-    'bc1': tf.Variable(tf.zeros([32])),
-    'bc2': tf.Variable(tf.zeros([64])),
-    'bc3': tf.Variable(tf.zeros([128])),
-    'bc4': tf.Variable(tf.zeros([256])),
-    'bd1': tf.Variable(tf.zeros([1024])),
-    'out': tf.Variable(tf.zeros([n_classes]))
-}
-
-
 
 # Construct model
 print('constructing model')
