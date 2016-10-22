@@ -58,11 +58,11 @@ def conv2d(input_, output_dim,
            name="conv2d", visualize=False, summarize=False):
     with tf.variable_scope(name):
         #stddev = math.sqrt(6.0)/math.sqrt(float(input_.get_shape().as_list()[-1])+ float(output_dim)
-        w = tf.get_variable(name='w', [k_h, k_w, input_.get_shape()[-1], output_dim],
+        w = tf.get_variable('w', [k_h, k_w, input_.get_shape()[-1], output_dim],
                             initializer=tf.truncated_normal_initializer(stddev=stddev))
         conv = tf.nn.conv2d(input_, w, strides=[1, d_h, d_w, 1], padding='SAME')
 
-        biases = tf.get_variable(name='biases', [output_dim], initializer=tf.constant_initializer(0.0))
+        biases = tf.get_variable('biases', [output_dim], initializer=tf.constant_initializer(0.0))
 
         conv = tf.nn.bias_add(conv, biases, name='conv')
         return conv
