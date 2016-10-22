@@ -117,7 +117,7 @@ def conv_net(x, weights, biases, keep_prob):
         gap = tf.reduce_mean( conv5, [1,2], 'input')
         gap =  tf.nn.dropout(gap, keep_prob ,name='dropout')
 
-    with tf.variable_scope('output')
+    with tf.variable_scope('output'):
         gap_w = tf.get_variable(
                     "W",
                     shape=[1024, n_classes],
