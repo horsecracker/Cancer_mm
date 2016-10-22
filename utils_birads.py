@@ -4,7 +4,7 @@ import tensorflow as tf
 import scipy.ndimage
 from sklearn.utils import shuffle
 
-CLASSES = {'0':0, '1':0, '2':0, '3':0, '4':1, '5':1, '6':1, 'unknown':0}
+CLASSES = {'0':0, '1':0, '2':0, '3':0, '4':1, '5':1, '6':1, '9':0}
 # CLASSES = {'1':0, '4':1}
 
 # DataLoader class: need to customize according to your dataset
@@ -40,13 +40,13 @@ class DensityLoader(object):
         return images_batch, labels_batch
     
     def load_test(self):
-        return self.test_data.reshape((-1, self.h, self.w, self.c)), self.test_label
+        return self.test_data.reshape((-1, self.h, self.w, self.c)), self.test_labels
 
 
 def load_density_data(data_path):
     images = []
     labels = []
-    n_classes = len(CLASSES.keys())
+    n_classes = len(set(CLASSES.values()))
     for root, dirs, files in os.walk(data_path):
         for name in files:
             if name.split('.')[-1] in {'jpg'}:
@@ -58,9 +58,9 @@ def load_density_data(data_path):
                 label = np.zeros(n_classes)
                 label[CLASSES[label_string]] = 1.0
                 #print im_gray.shape##############
-                if im_gray.shape[0]==256 and im_gray.shape[1]==256:
-     		  labels.append(label)
-                  images.append(im_gray)
+                #if im_gray.shape[0]==256 and im_gray.shape[1]==256:
+     		labels.append(label)
+                images.append(im_gray)
 
     labels,images = shuffle(labels,images)
     #images = shuffle(images)
@@ -83,10 +83,11 @@ def bias_variable(shape):
   initial = tf.constant(0.1, shape=shape)
   return tf.Variable(initial)
 
-
+'''
 def conv2d(x, W):
   return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
 
 def max_pool_2x2(x):
   return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],
                         strides=[1, 2, 2, 1], padding='SAME')
+'''

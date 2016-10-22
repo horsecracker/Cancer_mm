@@ -34,7 +34,7 @@ savemodel_step = 2000
 # Network Parameters
 img_size = 256
 n_input = img_size*img_size # data input
-n_classes = 4 # total classes (0-3)
+n_classes = 2 # total classes (0-3)
 #dropout = 0.75 # Dropout, probability to keep units
 dropout = 0.6
 epsilon = 1e-3
@@ -48,6 +48,7 @@ f.write('\n')
 x = tf.placeholder(tf.float32, [None, img_size, img_size, 1])
 y = tf.placeholder(tf.float32, [None, n_classes])
 keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
+loader = DensityLoader()
 
 		
 # Create some wrappers for simplicity
@@ -174,7 +175,6 @@ test_writer = tf.train.SummaryWriter(test_log)
 init = tf.initialize_all_variables()
 saver=tf.train.Saver()
 
-loader = DensityLoader()
 confusion_m_all=[]
 # Launch the graph
 print('launch graph')
