@@ -59,7 +59,7 @@ def load_density_data(data_path, need_3d = True):
                 label[CLASSES[label_string]] = 1.0
                 #print im_gray.shape##############
                 #if im_gray.shape[0]==256 and im_gray.shape[1]==256:
-     		    labels.append(label)
+                labels.append(label)
                 if need_3d:
                     im_gray=np.reshape(im_gray,(256,256,1))
                     im_gray=np.concatenate([im_gray,im_gray,im_gray],axis=2)    
@@ -76,25 +76,3 @@ def load_density_data(data_path, need_3d = True):
     print(y.shape)
 
     return X, y
-
-
-
-#img_4d =np.concatenate((img_4d,img_4d,img_4d),axis=3)
-
-
-def weight_variable(shape):
-  initial = tf.truncated_normal(shape, stddev=0.1)
-  return tf.Variable(initial)
-
-def bias_variable(shape):
-  initial = tf.constant(0.1, shape=shape)
-  return tf.Variable(initial)
-
-'''
-def conv2d(x, W):
-  return tf.nn.conv2d(x, W, strides=[1, 1, 1, 1], padding='SAME')
-
-def max_pool_2x2(x):
-  return tf.nn.max_pool(x, ksize=[1, 2, 2, 1],
-                        strides=[1, 2, 2, 1], padding='SAME')
-'''
