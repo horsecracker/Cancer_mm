@@ -182,7 +182,7 @@ with tf.InteractiveSession() as sess:
                 #print(y_true.shape)
                     #print (confu_m)
                 confusion_m_all.append(confu_m)
-                        test_writer.add_summary(summary,step*test_steps+test_step)
+                test_writer.add_summary(summary,step*test_steps+test_step)
                 print("Test Accuracy: {} \n".format(test_acc_sum/test_steps))
                     confusion_m_average=np.sum(confusion_m_all, axis=0)
                 #if step% 5000==1:
