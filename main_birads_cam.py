@@ -14,11 +14,11 @@ from utils_birads import *
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-train_log='../tensorboard_out/birads_train_log_cam'
-test_log='../tensorboard_out/birads_test_log_cam'
-save_model_name='../checkpoint_file/birads_cam'
+train_log='../tensorboard_out/birads_train_log_cam2'
+test_log='../tensorboard_out/birads_test_log_cam2'
+save_model_name='../checkpoint_file/birads_cam2'
 
-logfile='../logfile/log_birads_cam.txt'
+logfile='../logfile/log_birads_cam2.txt'
 f=open(logfile, 'a+')
 f.write('0.01, 0.1 sttdev initialization of weight, data with whitenning \n')
 
@@ -102,25 +102,31 @@ def conv_net(x, keep_prob):
         conv3 = maxpool2d(conv3, k=2)
 
     with tf.variable_scope('conv4') as scope:
-        conv4 = conv2d(conv3, 246)
+        conv4 = conv2d(conv3, 256)
         # Max Pooling (down-sampling)
         conv4 = maxpool2d(conv4, k=2)
     #conv4=tf.nn.dropout(conv4,dropout)
 
     with tf.variable_scope('conv5') as scope:
-        conv5 = conv2d(conv3, 512, k_h=3, k_w=3)
+        conv5 = conv2d(conv4, 512)
+        # Max Pooling (down-sampling)
+        conv5 = maxpool2d(conv5, k=2)
+    #conv4=tf.nn.dropout(conv4,dropout)
+
+    with tf.variable_scope('conv6') as scope:
+        conv6 = conv2d(conv5, 1024, k_h=3, k_w=3)
         # Max Pooling (down-sampling)
         #conv5 = maxpool2d(conv4, k=2)
 
 
     with tf.variable_scope("GAP"):
-        gap = tf.reduce_mean( conv5, [1,2], name='input')
+        gap = tf.reduce_mean( conv6, [1,2], name='input')
         gap =  tf.nn.dropout(gap, keep_prob ,name='dropout')
 
     with tf.variable_scope('output'):
         gap_w = tf.get_variable(
                     "W",
-                    shape=[512, n_classes],
+                    shape=[1024, n_classes],
                     initializer=tf.random_normal_initializer(0., 0.01))
         logits=  tf.matmul( gap, gap_w, name='logits')
         out = tf.nn.softmax(logits,name='softmax')
