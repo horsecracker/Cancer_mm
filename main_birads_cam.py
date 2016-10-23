@@ -25,7 +25,7 @@ f.write('0.01, 0.1 sttdev initialization of weight, data with whitenning \n')
 
 # Parameters
 #learning_rate= 0.0001
-learning_rate = 0.00005
+learning_rate = 0.00001
 training_iters= 20000000
 batch_size = 64
 display_step = 20
