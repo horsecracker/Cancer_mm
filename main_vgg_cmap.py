@@ -160,7 +160,7 @@ with tf.InteractiveSession() as sess:
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
         #f=open(logfile, 'r+')
-        f.write('\n')
+            f.write('\n')
             f.write("Iter " + str(step*batch_size) + ", Minibatch Loss= " + \
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
