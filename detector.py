@@ -9,8 +9,9 @@ class Detector():
 
         with open(weight_file_path) as f:
             self.pretrained_weights = cPickle.load(f)
+            print 'weight loaded from pickle file'
 
-    def get_weight( self, layesr_name):
+    def get_weight( self, layer_name):
         layer = self.pretrained_weights[layer_name]
         return layer[0]
 
