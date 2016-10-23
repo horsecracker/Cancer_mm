@@ -178,16 +178,16 @@ with tf.InteractiveSession() as sess:
                 test_acc_sum+=temp_acc
                 y_true=labels_test[test_step*batch_size:(test_step+1)*batch_size]
                 confu_m=confusion_matrix(np.argmax(y_true,1), np.argmax(yy,1)) #,labels=[0,1,2,3])
-                        #if confu_m.shape==(4,4):
+                #if confu_m.shape==(4,4):
                 #print(y_true.shape)
-                    #print (confu_m)
+                #print (confu_m)
                 confusion_m_all.append(confu_m)
                 test_writer.add_summary(summary,step*test_steps+test_step)
                 print("Test Accuracy: {} \n".format(test_acc_sum/test_steps))
-                    confusion_m_average=np.sum(confusion_m_all, axis=0)
+                confusion_m_average=np.sum(confusion_m_all, axis=0)
                 #if step% 5000==1:
                 print(confusion_m_average) 
-                    #f=open(logfile, 'r+')
+                #f=open(logfile, 'r+')
                 f.write("Test Accuracy: {} \n".format(test_acc_sum/test_steps))
                 f.write(str(confusion_m_average))
                 #f.close
