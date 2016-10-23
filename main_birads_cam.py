@@ -80,7 +80,7 @@ def campool2d(input_, output_dim):
                           padding='SAME',name='pool')
 
 # Create model
-def conv_net(x, weights, biases, keep_prob):
+def conv_net(x, keep_prob):
 
     # Convolution Layer
     
@@ -129,7 +129,7 @@ def conv_net(x, weights, biases, keep_prob):
 
 # Construct model
 print('constructing model')
-log,pred = conv_net(x, weights, biases, keep_prob)
+log,pred = conv_net(x, keep_prob)
 
 # Define loss and optimizer
 #cost = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(log, y))
