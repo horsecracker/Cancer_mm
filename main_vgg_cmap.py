@@ -22,11 +22,14 @@ model_path = '../checkpoint_file/birads_vgg_cam'
 
 pretrained_model_path = None #'../models/caltech256/model-0'
 n_epochs = 10000
-init_learning_rate = 0.01
+#init_learning_rate = 0.01
+init_learning_rate = 0.001
 weight_decay_rate = 0.0005
 momentum = 0.9
-batch_size = 60
+batch_size = 64
 
+
+img_size = 256
 
 #learning_rate= 0.0001
 display_step = 20
