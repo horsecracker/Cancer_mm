@@ -110,7 +110,7 @@ def conv_net(x, keep_prob):
     with tf.variable_scope('conv5') as scope:
         conv5 = conv2d(conv3, 512, k_h=3, k_w=3)
         # Max Pooling (down-sampling)
-        conv5 = maxpool2d(conv4, k=2)
+        #conv5 = maxpool2d(conv4, k=2)
 
 
     with tf.variable_scope("GAP"):
@@ -120,7 +120,7 @@ def conv_net(x, keep_prob):
     with tf.variable_scope('output'):
         gap_w = tf.get_variable(
                     "W",
-                    shape=[1024, n_classes],
+                    shape=[512, n_classes],
                     initializer=tf.random_normal_initializer(0., 0.01))
         logits=  tf.matmul( gap, gap_w, name='logits')
         out = tf.nn.softmax(logits,name='softmax')
