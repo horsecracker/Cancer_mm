@@ -93,7 +93,7 @@ labels_tf = tf.placeholder( tf.int64, [None], name='labels')
 
 #loader = DensityLoader()
 n_labels = 2 # loader.n_classes 
-x = tf.placeholder(tf.float32, [None, img_size, img_size, 3], mame='images')
+x = tf.placeholder(tf.float32, [None, img_size, img_size, 3], name='images')
 y = tf.placeholder(tf.float32, [None, n_labels], name='labels')
 keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
 
