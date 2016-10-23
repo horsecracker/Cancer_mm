@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import cPickle
-import ipdb
+
 class Detector():
     def __init__(self, weight_file_path, n_labels):
         self.image_mean = [103.939, 116.779, 123.68]    #############
