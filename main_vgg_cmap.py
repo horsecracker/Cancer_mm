@@ -93,24 +93,25 @@ labels_tf = tf.placeholder( tf.int64, [None], name='labels')
 
 #loader = DensityLoader()
 n_labels = 2 # loader.n_classes 
-
-learning_rate = tf.placeholder( tf.float32, [])
-x = tf.placeholder(tf.float32, [None, img_size, img_size, 3])
-y = tf.placeholder(tf.float32, [None, n_labels])
+x = tf.placeholder(tf.float32, [None, img_size, img_size, 3], mame='images')
+y = tf.placeholder(tf.float32, [None, n_labels], name='labels')
 keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
+
+learning_rate = tf.placeholder( tf.float32, [], name='learning_rate')
 
 #######################
 detector = Detector(weight_path, n_labels)
 
 p1,p2,p3,p4,conv5, conv6, gap, output = detector.inference(x)
-loss_tf = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits( output, y ), name='loss')
+pred =  tf.nn.softmax(ouput, name='softmax')
+#loss_tf = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits( output, y ), name='loss')
+loss_tf = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(output , y),name='loss')
 
 weights_only = filter( lambda x: x.name.endswith('W:0'), tf.trainable_variables() )
 weight_decay = tf.reduce_sum(tf.pack([tf.nn.l2_loss(x) for x in weights_only])) * weight_decay_rate
 #loss_tf += weight_decay
 cost += weight_decay
 
-pred =  tf.nn.softmax(ouput, name='softmax')
 correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32), name = 'accuracy')
 
