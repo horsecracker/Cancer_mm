@@ -88,23 +88,23 @@ def conv_net(x, keep_prob):
 
         conv1 = conv2d(x,32)
         # Max Pooling (down-sampling)
-        conv1 = maxpool2d(conv1, k=2)
+        conv1 = maxpool2d(conv1, k=2) #128
 
     with tf.variable_scope('conv2') as scope:
         # Convolution Layer
         conv2 = conv2d(conv1, 64)
         # Max Pooling (down-sampling)
-        conv2 = maxpool2d(conv2, k=2)
+        conv2 = maxpool2d(conv2, k=2)  #64
 
     with tf.variable_scope('conv3') as scope:
         conv3 = conv2d(conv2, 128)
         # Max Pooling (down-sampling)
-        conv3 = maxpool2d(conv3, k=2)
-
+        conv3 = maxpool2d(conv3, k=2)   #32
+ 
     with tf.variable_scope('conv4') as scope:
         conv4 = conv2d(conv3, 256)
         # Max Pooling (down-sampling)
-        conv4 = maxpool2d(conv4, k=2)
+        conv4 = maxpool2d(conv4, k=2)   #16
     #conv4=tf.nn.dropout(conv4,dropout)
 
     with tf.variable_scope('conv5') as scope:

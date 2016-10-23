@@ -43,7 +43,7 @@ class DensityLoader(object):
         return self.test_data.reshape((-1, self.h, self.w, self.c)), self.test_labels
 
 
-def load_density_data(data_path):
+def load_density_data(data_path, need_3d = True):
     images = []
     labels = []
     n_classes = len(set(CLASSES.values()))
@@ -54,12 +54,16 @@ def load_density_data(data_path):
                 # im_gray = scipy.misc.imread(full_path, mode='L')
                 im_gray = scipy.ndimage.imread(full_path, mode='L')
                 im_gray =(im_gray/255.0)-0.5
-	        label_string = full_path.split('/')[-2]
+	            label_string = full_path.split('/')[-2]
                 label = np.zeros(n_classes)
                 label[CLASSES[label_string]] = 1.0
                 #print im_gray.shape##############
                 #if im_gray.shape[0]==256 and im_gray.shape[1]==256:
-     		labels.append(label)
+     		    labels.append(label)
+                if need_3d:
+                    im_gray=np.reshape(im_gray,(256,256,1))
+                    im_gray=np.concatenate([im_gray,im_gray,im_gray],axis=2)    
+                    #im_gray=np.concatenate((img_gray,img_gray,img_gray),axis=2)
                 images.append(im_gray)
 
     labels,images = shuffle(labels,images)
@@ -73,6 +77,9 @@ def load_density_data(data_path):
 
     return X, y
 
+
+
+#img_4d =np.concatenate((img_4d,img_4d,img_4d),axis=3)
 
 
 def weight_variable(shape):
