@@ -110,7 +110,7 @@ loss_tf = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(output , y),na
 weights_only = filter( lambda x: x.name.endswith('W:0'), tf.trainable_variables() )
 weight_decay = tf.reduce_sum(tf.pack([tf.nn.l2_loss(x) for x in weights_only])) * weight_decay_rate
 #loss_tf += weight_decay
-cost += loss_tf + weight_decay
+cost = tf.add(loss_tf , weight_decay)
 
 correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32), name = 'accuracy')
