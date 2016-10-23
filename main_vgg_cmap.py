@@ -103,7 +103,7 @@ learning_rate = tf.placeholder( tf.float32, [], name='learning_rate')
 detector = Detector(weight_path, n_labels)
 
 p1,p2,p3,p4,conv5, conv6, gap, output = detector.inference(x)
-pred =  tf.nn.softmax(ouput, name='softmax')
+pred =  tf.nn.softmax(output, name='softmax')
 #loss_tf = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits( output, y ), name='loss')
 loss_tf = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(output , y),name='loss')
 

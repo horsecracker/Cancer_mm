@@ -11,17 +11,20 @@ import matplotlib.pyplot as plt
 import os
 import ipdb
 
+
 testset_path = '../data/caltech/test.pickle'
 label_dict_path = '../data/caltech/label_dict.pickle'
 
-weight_path = '../data/caffe_layers_value.pickle'
+weight_path = '../data/caffe_layers_value.pickle'   ###### How to get this path
 model_path = '../models/caltech256/model-4'
 
 batch_size = 1
 
+'''
 testset = pd.read_pickle( testset_path )[::-1][:20]
 label_dict = pd.read_pickle( label_dict_path )
 n_labels = len( label_dict )
+'''
 
 images_tf = tf.placeholder( tf.float32, [None, 224, 224, 3], name="images")
 labels_tf = tf.placeholder( tf.int64, [None], name='labels')
