@@ -54,7 +54,7 @@ def load_density_data(data_path, need_3d = True):
                 # im_gray = scipy.misc.imread(full_path, mode='L')
                 im_gray = scipy.ndimage.imread(full_path, mode='L')
                 im_gray =(im_gray/255.0)-0.5
-	            label_string = full_path.split('/')[-2]
+                label_string = full_path.split('/')[-2]
                 label = np.zeros(n_classes)
                 label[CLASSES[label_string]] = 1.0
                 #print im_gray.shape##############
