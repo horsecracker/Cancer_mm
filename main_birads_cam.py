@@ -114,7 +114,7 @@ def conv_net(x, keep_prob):
 
 
     with tf.variable_scope("GAP"):
-        gap = tf.reduce_mean( conv5, [1,2], 'input')
+        gap = tf.reduce_mean( conv5, [1,2], name='input')
         gap =  tf.nn.dropout(gap, keep_prob ,name='dropout')
 
     with tf.variable_scope('output'):
