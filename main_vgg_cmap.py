@@ -165,7 +165,6 @@ with tf.InteractiveSession() as sess:
                   "{:.6f}".format(loss) + ", Training Accuracy= " + \
                   "{:.5f}".format(acc))
             f.write('\n')
-        #f.close
   
 
         if step % (display_step*2) == 1:
