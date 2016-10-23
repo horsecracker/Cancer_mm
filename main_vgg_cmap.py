@@ -96,7 +96,7 @@ n_labels =  loader.n_classes
 
 learning_rate = tf.placeholder( tf.float32, [])
 x = tf.placeholder(tf.float32, [None, img_size, img_size, 3])
-y = tf.placeholder(tf.float32, [None, n_classes])
+y = tf.placeholder(tf.float32, [None, n_labels])
 keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
 
 #######################
