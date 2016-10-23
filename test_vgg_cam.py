@@ -15,7 +15,7 @@ import ipdb
 testset_path = '../data/caltech/test.pickle'
 label_dict_path = '../data/caltech/label_dict.pickle'
 
-weight_path = '../data/caffe_layers_value.pickle'   ###### How to get this path
+weight_path = 'caffe_layers_value.pickle'  ###### How to get this path
 model_path = '../models/caltech256/model-4'
 
 batch_size = 1
@@ -63,12 +63,12 @@ for start, end in zip(
     label_predictions = output_val.argmax( axis=1 )
     acc = (label_predictions == current_labels).sum()
 
-    classmap_vals = sess.run(
-            classmap,
-            feed_dict={
-                labels_tf: label_predictions,
-                conv6: conv6_val
-                })
+    #classmap_vals = sess.run(
+    #        classmap,
+    #        feed_dict={
+    #            labels_tf: label_predictions,
+    #            conv6: conv6_val
+    #           })
 
     classmap_answer = sess.run(
             classmap,

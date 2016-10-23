@@ -110,7 +110,7 @@ loss_tf = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(output , y),na
 weights_only = filter( lambda x: x.name.endswith('W:0'), tf.trainable_variables() )
 weight_decay = tf.reduce_sum(tf.pack([tf.nn.l2_loss(x) for x in weights_only])) * weight_decay_rate
 #loss_tf += weight_decay
-cost += weight_decay
+cost += loss_tf + weight_decay
 
 correct_pred = tf.equal(tf.argmax(pred, 1), tf.argmax(y, 1))
 accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32), name = 'accuracy')
@@ -121,7 +121,7 @@ grads_and_vars = map(lambda gv: (gv[0], gv[1]) if ('conv6' in gv[1].name or 'GAP
 #grads_and_vars = [(tf.clip_by_value(gv[0], -5., 5.), gv[1]) for gv in grads_and_vars]
 train_op = optimizer.apply_gradients( grads_and_vars )
 
-tf.scalar_summary('cross entropy cost',loss_tf)
+tf.scalar_summary('cross entropy cost',cost)
 tf.scalar_summary('accuracy',accuracy)
 merged = tf.merge_all_summaries()
 train_writer = tf.train.SummaryWriter(train_log)
