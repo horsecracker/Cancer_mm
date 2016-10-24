@@ -31,19 +31,18 @@ weight_path = 'caffe_layers_value.pickle'
 
 logfile='../logfile/log_birads_vgg_cam.txt'
 f=open(logfile, 'a+')
-f.write('pretrained from vgg \n')
+f.write('using weigth from caffee vgg\n')
 
 f.write('initial learning rate %f \n' %init_learning_rate)
 f.write('learning_rate_multiplier %f \n' %learning_rate_multiplier)
 f.write('lr_decay_step  %d \n'%lr_decay_step )
 f.write('l2 regulation scale %f \n'%weight_decay_rate  )
 
-print('pretrained from vgg \n')
-
-print('initial learning rate %f \n' %init_learning_rate)
-print('learning_rate_multiplier %f \n' %learning_rate_multiplier)
-print('lr_decay_step  %d \n'%lr_decay_step )
-print('l2 regulation scale %f \n'%weight_decay_rate  )
+print('using weigth from caffee vgg')
+print('initial learning rate %f' %init_learning_rate)
+print('learning_rate_multiplier %f' %learning_rate_multiplier)
+print('lr_decay_step  %d'%lr_decay_step )
+print('l2 regulation scale %f'%weight_decay_rate  )
 
 
 loader = DensityLoader()

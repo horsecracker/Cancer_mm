@@ -20,7 +20,7 @@ save_model_name='../checkpoint_file/birads_cam2'
 
 logfile='../logfile/log_birads_cam2.txt'
 f=open(logfile, 'a+')
-f.write('0.01, 0.1 sttdev initialization of weight, data with whitenning \n')
+f.write('minimal 16X16, with 512 gap filters\n')
 
 
 # Parameters
@@ -38,6 +38,7 @@ n_classes = 2 # total classes (0-3)
 #dropout = 0.75 # Dropout, probability to keep units
 dropout = 0.75
 epsilon = 1e-3
+filetern=512
 
 ####### logfile for hyperparameter and output check #########
 f.write('learning rate %f \n' %learning_rate)
@@ -107,14 +108,16 @@ def conv_net(x, keep_prob):
         conv4 = maxpool2d(conv4, k=2)   #16
     #conv4=tf.nn.dropout(conv4,dropout)
 
+    '''
     with tf.variable_scope('conv5') as scope:
         conv5 = conv2d(conv4, 512)
         # Max Pooling (down-sampling)
         conv5 = maxpool2d(conv5, k=2)
     #conv4=tf.nn.dropout(conv4,dropout)
+    '''
 
-    with tf.variable_scope('conv6') as scope:
-        conv6 = conv2d(conv5, 1024, k_h=3, k_w=3)
+    with tf.variable_scope('conv5') as scope:
+        conv6 = conv2d(conv4, filetern, k_h=3, k_w=3)
         # Max Pooling (down-sampling)
         #conv5 = maxpool2d(conv4, k=2)
 
@@ -126,7 +129,7 @@ def conv_net(x, keep_prob):
     with tf.variable_scope('output'):
         gap_w = tf.get_variable(
                     "W",
-                    shape=[1024, n_classes],
+                    shape=[filetern, n_classes],
                     initializer=tf.random_normal_initializer(0., 0.01))
         logits=  tf.matmul( gap, gap_w, name='logits')
         out = tf.nn.softmax(logits,name='softmax')
