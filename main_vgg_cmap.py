@@ -129,7 +129,9 @@ test_writer = tf.train.SummaryWriter(test_log)
 saver = tf.train.Saver()
 
 confusion_m_all=[]
-with tf.InteractiveSession() as sess:
+
+print('launch graph')
+with tf.Session() as sess:
 
     tf.initialize_all_variables().run()
     if pretrained_model_path:
