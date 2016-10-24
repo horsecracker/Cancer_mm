@@ -147,11 +147,12 @@ with tf.Session() as sess:
     #trainset = pd.concat( [trainset, trainset2] )
     # We lack the number of training set. Let's use some of the test images
 
-    step = 1
+    step = 0
     print('step: {}'.format(step))
     images_test, labels_test = loader.load_test()
     # Keep training until reach max iterations
     while step * batch_size < training_iters:
+        step += 1
         batch_x, batch_y = loader.next_batch(batch_size)
         # Run optimization op (backprop)
         summary,_=sess.run([merged, train_op], feed_dict={learning_rate: init_learning_rate, image_tf: batch_x, y: batch_y})
@@ -206,7 +207,6 @@ with tf.Session() as sess:
         if step % (lr_decay_step) == 1:
             init_learning_rate *= 0.99
 
-        step += 1
 
     f.close()
 
