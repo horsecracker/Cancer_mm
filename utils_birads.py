@@ -9,17 +9,18 @@ CLASSES = {'0':0, '1':0, '2':0, '3':0, '4':1, '5':1, '6':1, '9':0}
 
 # DataLoader class: need to customize according to your dataset
 class DensityLoader(object):
-    def __init__(self, need_3d = True):
-        self.train_data, self.train_labels = load_density_data('../birads_dataset/train-256/')
+    def __init__(self, data_3d = True):
+        self.train_data, self.train_labels = load_density_data('../birads_dataset/train-256/', need_3d = data_3d )
         print(self.train_labels[0:])
-        self.test_data, self.test_labels = load_density_data('../birads_dataset/dev-256/')
+        self.test_data, self.test_labels = load_density_data('../birads_dataset/dev-256/', need_3d = data_3d )
 
         self.n_classes = len(set(CLASSES.values()))
-        
-        self.num = self.train_data.shape[0]
+        self.trainnum = self.train_data.shape[0]
+        self.testnum = self.test_data.shape[0]
+
         self.h = 256
         self.w = 256
-        if need_3d:
+        if data_3d:
             self.c = 3 
         else:
             self.c = 1
@@ -34,7 +35,7 @@ class DensityLoader(object):
             labels_batch[i, ...] = self.train_labels[self._idx]
             
             self._idx += 1
-            if self._idx == self.num:
+            if self._idx == self.trainnum:
                 self._idx = 0
                 #self.train_data = shuffle(self.train_data, random_state=20)
                 #self.train_labels = shuffle(self.train_labels, random_state=20)

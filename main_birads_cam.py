@@ -49,7 +49,7 @@ f.write('\n')
 x = tf.placeholder(tf.float32, [None, img_size, img_size, 1])
 y = tf.placeholder(tf.float32, [None, n_classes])
 keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
-loader = DensityLoader()
+loader = DensityLoader(data_3d = False)
 
 		
 
