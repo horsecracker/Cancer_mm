@@ -11,8 +11,8 @@ from utils_birads import *
 
 #learning_rate= 0.0001
 #init_learning_rate = 0.01
-init_learning_rate = 0.001
-learning_rate_multiplier = 0.05
+init_learning_rate = 0.0005
+learning_rate_multiplier = 0.01
 lr_decay_step = 60   # every so many steps, learning rate * 0.99
 momentum = 0.9
 
