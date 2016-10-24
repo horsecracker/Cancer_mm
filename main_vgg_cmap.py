@@ -94,7 +94,7 @@ labels_tf = tf.placeholder( tf.int64, [None], name='labels')
 
 loader = DensityLoader()
 n_labels = loader.n_classes 
-x = tf.placeholder(tf.float32, [None, img_size, img_size, 3], name='images')
+image_tf = tf.placeholder(tf.float32, [None, img_size, img_size, 3], name='images')
 y = tf.placeholder(tf.float32, [None, n_labels], name='labels')
 keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
 
@@ -103,7 +103,7 @@ learning_rate = tf.placeholder( tf.float32, [], name='learning_rate')
 #######################
 detector = Detector(weight_path, n_labels)
 
-p1,p2,p3,p4,conv5, conv6, gap, output = detector.inference(x)
+p1,p2,p3,p4,conv5, conv6, gap, output = detector.inference(image_tf)
 pred =  tf.nn.softmax(output, name='softmax')
 #loss_tf = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits( output, y ), name='loss')
 loss_tf = tf.reduce_mean( tf.nn.softmax_cross_entropy_with_logits(output , y),name='loss')
@@ -154,12 +154,12 @@ with tf.Session() as sess:
     while step * batch_size < training_iters:
         batch_x, batch_y = loader.next_batch(batch_size)
         # Run optimization op (backprop)
-        summary,_=sess.run([merged, train_op], feed_dict={learning_rate: init_learning_rate, x: batch_x, y: batch_y})
+        summary,_=sess.run([merged, train_op], feed_dict={learning_rate: init_learning_rate, image_tf: batch_x, y: batch_y})
         train_writer.add_summary(summary,step)
 
         if step % display_step == 1:
             # Calculate batch loss and accuracy
-            loss, acc = sess.run([cost, accuracy], feed_dict={x: batch_x,
+            loss, acc = sess.run([cost, accuracy], feed_dict={image_tf: batch_x,
                                                               y: batch_y,
                                                               keep_prob: 1.})
             
@@ -179,7 +179,7 @@ with tf.Session() as sess:
             test_steps = len(images_test)/batch_size
             confusion_m_all=[]
             for test_step in range(test_steps):
-                temp_acc,yy,summary = sess.run([accuracy,pred,merged], feed_dict={x: images_test[test_step*batch_size:(test_step+1)*batch_size],
+                temp_acc,yy,summary = sess.run([accuracy,pred,merged], feed_dict={image_tf: images_test[test_step*batch_size:(test_step+1)*batch_size],
                                               y: labels_test[test_step*batch_size:(test_step+1)*batch_size],
                                               keep_prob: 1.})
                 test_acc_sum+=temp_acc
