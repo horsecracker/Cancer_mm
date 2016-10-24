@@ -9,33 +9,40 @@ from detector import Detector
 
 from utils_birads import *
 
+#learning_rate= 0.0001
+#init_learning_rate = 0.01
+init_learning_rate = 0.001
+learning_rate_multiplier = 0.05
+lr_decay_step = 60   # every so many steps, learning rate * 0.99
+momentum = 0.9
+
+weight_decay_rate = 0.0005  # scale for l2 loss
+
+batch_size = 64
+
+
 train_log='../tensorboard_out/birads_vgg_cam'
 test_log='../tensorboard_out/birads_vgg_cam'
+
+pretrained_model_path = None #'../models/caltech256/model-0'
+model_path = '../checkpoint_file/birads_vgg_cam'
+
+weight_path = 'caffe_layers_value.pickle'
 
 logfile='../logfile/log_birads_vgg_cam.txt'
 f=open(logfile, 'a+')
 f.write('pretrained from vgg \n')
 
 
-weight_path = 'caffe_layers_value.pickle'
-model_path = '../checkpoint_file/birads_vgg_cam'
-
-pretrained_model_path = None #'../models/caltech256/model-0'
-n_epochs = 10000
-training_iters= 20000000
-#init_learning_rate = 0.01
-init_learning_rate = 0.01
-weight_decay_rate = 0.0005
-momentum = 0.9
-batch_size = 64
+loader = DensityLoader()
+n_labels = loader.n_classes 
+img_size = loader.h
 
 
-img_size = 256
-
-#learning_rate= 0.0001
 display_step = 20
 savemodel_step = 2000
-lr_decay_step = 60
+n_epochs = 10000
+training_iters= 20000000
 
 ###################
 '''
@@ -90,9 +97,7 @@ labels_tf = tf.placeholder( tf.int64, [None], name='labels')
 
 ####################### new code for data processing #######
 
-loader = DensityLoader()
-n_labels = loader.n_classes 
-image_tf = tf.placeholder(tf.float32, [None, img_size, img_size, 3], name='images')
+image_tf = tf.placeholder(tf.float32, [None, img_size, img_size, loader.c], name='images')
 y = tf.placeholder(tf.float32, [None, n_labels], name='labels')
 keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
 
@@ -116,7 +121,7 @@ accuracy = tf.reduce_mean(tf.cast(correct_pred, tf.float32), name = 'accuracy')
 
 optimizer = tf.train.MomentumOptimizer( learning_rate, momentum )
 grads_and_vars = optimizer.compute_gradients( loss_tf )
-grads_and_vars = map(lambda gv: (gv[0], gv[1]) if ('conv6' in gv[1].name or 'GAP' in gv[1].name) else (gv[0]*0.1, gv[1]), grads_and_vars)
+grads_and_vars = map(lambda gv: (gv[0], gv[1]) if ('conv6' in gv[1].name or 'GAP' in gv[1].name) else (gv[0]*learning_rate_multiplier, gv[1]), grads_and_vars)
 #grads_and_vars = [(tf.clip_by_value(gv[0], -5., 5.), gv[1]) for gv in grads_and_vars]
 train_op = optimizer.apply_gradients( grads_and_vars )
 
