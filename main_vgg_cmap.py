@@ -33,6 +33,17 @@ logfile='../logfile/log_birads_vgg_cam.txt'
 f=open(logfile, 'a+')
 f.write('pretrained from vgg \n')
 
+f.write('initial learning rate %f \n' %init_learning_rate)
+f.write('learning_rate_multiplier %f \n' %learning_rate_multiplier)
+f.write('lr_decay_step  %d \n'%lr_decay_step )
+f.write('l2 regulation scale %f \n'%weight_decay_rate  )
+
+pring('pretrained from vgg \n')
+pring('initial learning rate %f \n' %init_learning_rate)
+pring('learning_rate_multiplier %f \n' %learning_rate_multiplier)
+pring('lr_decay_step  %d \n'%lr_decay_step )
+pring('l2 regulation scale %f \n'%weight_decay_rate  )
+
 
 loader = DensityLoader()
 n_labels = loader.n_classes 
