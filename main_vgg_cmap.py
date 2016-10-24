@@ -35,9 +35,10 @@ img_size = 256
 #learning_rate= 0.0001
 display_step = 20
 savemodel_step = 2000
-lr_decay_step = 50
+lr_decay_step = 60
 
-
+###################
+'''
 dataset_path = '/media/storage3/Study/data/256_ObjectCategories'
 
 caltech_path = '../data/caltech'
@@ -45,9 +46,6 @@ trainset_path = '../data/caltech/train.pickle'
 testset_path = '../data/caltech/test.pickle'
 label_dict_path = '../data/caltech/label_dict.pickle'
 
-
-###################
-'''
 if not os.path.exists( trainset_path ):
     if not os.path.exists( caltech_path ):
         os.makedirs( caltech_path )
@@ -202,7 +200,7 @@ with tf.Session() as sess:
 
         if step % (savemodel_step) == 1:
             print('at step ' +str(step) + ' model saved. ' )
-            save_path=saver.save(sess,save_model_name+'-'+str(step)+'.ckpt')
+            save_path=saver.save(sess, model_path+'-'+str(step)+'.ckpt')
 
         if step % (lr_decay_step) == 1:
             init_learning_rate *= 0.99
