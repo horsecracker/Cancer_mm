@@ -191,14 +191,14 @@ with tf.Session() as sess:
                 #print (confu_m)
                 confusion_m_all.append(confu_m)
                 test_writer.add_summary(summary,step*test_steps+test_step)
-                print("Test Accuracy: {} \n".format(test_acc_sum/test_steps))
-                confusion_m_average=np.sum(confusion_m_all, axis=0)
-                #if step% 5000==1:
-                print(confusion_m_average) 
-                #f=open(logfile, 'r+')
-                f.write("Test Accuracy: {} \n".format(test_acc_sum/test_steps))
-                f.write(str(confusion_m_average))
-                #f.close
+            print("Test Accuracy: {} \n".format(test_acc_sum/test_steps))
+            confusion_m_average=np.sum(confusion_m_all, axis=0)
+            #if step% 5000==1:
+            print(confusion_m_average) 
+            #f=open(logfile, 'r+')
+            f.write("Test Accuracy: {} \n".format(test_acc_sum/test_steps))
+            f.write(str(confusion_m_average))
+            #f.close
 
         if step % (savemodel_step) == 1:
             print('at step ' +str(step) + ' model saved. ' )
