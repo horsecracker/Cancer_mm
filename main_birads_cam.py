@@ -14,11 +14,11 @@ from utils_birads import *
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-train_log='../tensorboard_out/birads_train_log_cam2'
-test_log='../tensorboard_out/birads_test_log_cam2'
-save_model_name='../checkpoint_file/birads_cam2'
+train_log='../tensorboard_out/birads_train_log_cam3'
+test_log='../tensorboard_out/birads_test_log_cam3'
+save_model_name='../checkpoint_file/birads_cam3'
 
-logfile='../logfile/log_birads_cam2.txt'
+logfile='../logfile/log_birads_cam3.txt'
 f=open(logfile, 'a+')
 f.write('using square image, with minimal 16X16, with 512 gap filters\n')
 
