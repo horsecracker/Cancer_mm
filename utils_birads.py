@@ -52,6 +52,56 @@ class DensityLoader(object):
 
         #self.n_train_examples, self.n_dev_examples, self.n_test_examples = self.train_data[0].shape[0], self.dev_data[0].shape[0], self.test_data[0].shape[0]
         
+    def print_label_statistics(self, labels, labels_label):
+    class_count = {key: 0 for key in set(self.classes_map.values())}
+    for label in labels:
+        class_count[np.argmax(label)] += 1
+    print("Class Balance for {}: {}. Total #: {}".format(labels_label, class_count, len(labels)))
+    return class_count
+
+
+    def print_all_label_statistics(self):
+        self.print_label_statistics(self.train_labels, "Train")
+        #self.print_label_statistics(self.dev_labels, "Dev")
+        self.print_label_statistics(self.test_labels, "Test")
+
+    def enforce_class_balance(self):
+        self.train_data, self.train_labels = self.enforce_class_balance_helper(self.train_data, self.train_labels)
+        #self.dev_data, self.dev_labels = self.enforce_class_balance_helper(self.dev_data, self.dev_labels)
+        self.test_data, self.test_labels = self.enforce_class_balance_helper(self.test_data, self.test_labels)
+
+    def enforce_class_balance_helper(self, data, labels):
+        class_count = {key: 0 for key in set(self.classes_map.values())}
+        for i in range(labels.shape[0]):
+            label = labels[i][...]
+            class_count[np.argmax(label)] += 1
+        min_class_count = min(class_count.values())
+
+        image_data = data
+        #image_data, additional_data = data
+
+        image_data_new = []
+        #additional_data_new = []
+        labels_new = []
+        for cl, count in class_count.iteritems():
+            label_target = [1 if i == cl else 0 for i in range(len(set(class_count.values())))]
+            indicies = np.where(labels == label_target)[0]
+            indicies = list(set(indicies))
+            cur_count = 0
+            for index in indicies:
+                if cur_count < min_class_count:
+                    image_data_new.append(image_data[index][...])
+                    #additional_data_new.append(additional_data[index][...])
+                    labels_new.append(labels[index][...])
+                    cur_count += 1
+
+        image_data_new = np.array(image_data_new)
+        #additional_data_new = np.array(additional_data_new)
+        data_new = (image_data_new, additional_data_new)
+        labels_new = np.array(labels_new)
+        return data_new, labels_new
+
+
     def next_batch(self, batch_size):
         images_batch = np.zeros((batch_size, self.h, self.w, self.c)) 
         labels_batch = np.zeros((batch_size, self.n_classes))
@@ -70,6 +120,10 @@ class DensityLoader(object):
     
     def load_test(self):
         return self.test_data.reshape((-1, self.h, self.w, self.c)), self.test_labels
+
+
+
+
 
 
 def load_density_data(data_path, need_3d = True):
@@ -108,51 +162,3 @@ def load_density_data(data_path, need_3d = True):
 
 
 
-def print_label_statistics(self, labels, labels_label):
-    class_count = {key: 0 for key in set(self.classes_map.values())}
-    for label in labels:
-        class_count[np.argmax(label)] += 1
-    print("Class Balance for {}: {}. Total #: {}".format(labels_label, class_count, len(labels)))
-    return class_count
-
-
-def print_all_label_statistics(self):
-    self.print_label_statistics(self.train_labels, "Train")
-    #self.print_label_statistics(self.dev_labels, "Dev")
-    self.print_label_statistics(self.test_labels, "Test")
-
-def enforce_class_balance(self):
-    self.train_data, self.train_labels = self.enforce_class_balance_helper(self.train_data, self.train_labels)
-    #self.dev_data, self.dev_labels = self.enforce_class_balance_helper(self.dev_data, self.dev_labels)
-    self.test_data, self.test_labels = self.enforce_class_balance_helper(self.test_data, self.test_labels)
-
-def enforce_class_balance_helper(self, data, labels):
-    class_count = {key: 0 for key in set(self.classes_map.values())}
-    for i in range(labels.shape[0]):
-        label = labels[i][...]
-        class_count[np.argmax(label)] += 1
-    min_class_count = min(class_count.values())
-
-    image_data = data
-    #image_data, additional_data = data
-
-    image_data_new = []
-    #additional_data_new = []
-    labels_new = []
-    for cl, count in class_count.iteritems():
-        label_target = [1 if i == cl else 0 for i in range(len(set(class_count.values())))]
-        indicies = np.where(labels == label_target)[0]
-        indicies = list(set(indicies))
-        cur_count = 0
-        for index in indicies:
-            if cur_count < min_class_count:
-                image_data_new.append(image_data[index][...])
-                #additional_data_new.append(additional_data[index][...])
-                labels_new.append(labels[index][...])
-                cur_count += 1
-
-    image_data_new = np.array(image_data_new)
-    #additional_data_new = np.array(additional_data_new)
-    data_new = (image_data_new, additional_data_new)
-    labels_new = np.array(labels_new)
-    return data_new, labels_new
