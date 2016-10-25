@@ -23,7 +23,7 @@ class DensityLoader(object):
         else:
             self.c = 1
         
-        self._idx = 0
+        self._idx = 1
 
         self.classes_map = CLASSES
         self.n_classes = len(set(self.classes_map.values()))
