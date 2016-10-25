@@ -32,7 +32,7 @@ display_step = 20
 savemodel_step = 2000
 
 # Network Parameters
-img_size = 256
+img_size = 512
 n_input = img_size*img_size # data input
 n_classes = 2 # total classes (0-3)
 #dropout = 0.75 # Dropout, probability to keep units

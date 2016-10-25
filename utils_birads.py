@@ -16,10 +16,10 @@ class DensityLoader(object):
 
         #self.n_classes = len(set(CLASSES.values()))
 
-        self.h = 256
-        self.w = 256
+        self.h = 512
+        self.w = 512
         if data_3d:
-            self.c = 3 
+            self.c = 1 
         else:
             self.c = 1
         
