@@ -45,7 +45,6 @@ class DensityLoader(object):
 
         self.trainnum = self.train_data.shape[0]
         self.testnum = self.test_data.shape[0]
-        exit()
         
         #self.training_examples_count = self.train_labels.shape[0]
         #self.dev_examples_count = self.dev_labels.shape[0]
