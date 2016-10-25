@@ -45,6 +45,7 @@ class DensityLoader(object):
 
         self.trainnum = self.train_data.shape[0]
         self.testnum = self.test_data.shape[0]
+        exit()
         
         #self.training_examples_count = self.train_labels.shape[0]
         #self.dev_examples_count = self.dev_labels.shape[0]
@@ -66,7 +67,7 @@ class DensityLoader(object):
         self.print_label_statistics(self.test_labels, "Test")
 
     def enforce_class_balance(self):
-        self.train_data, self.train_labels = self.enforce_class_balance_helper(self.train_data, self.train_labels)
+        #self.train_data, self.train_labels = self.enforce_class_balance_helper(self.train_data, self.train_labels)
         #self.dev_data, self.dev_labels = self.enforce_class_balance_helper(self.dev_data, self.dev_labels)
         self.test_data, self.test_labels = self.enforce_class_balance_helper(self.test_data, self.test_labels)
 
@@ -120,9 +121,6 @@ class DensityLoader(object):
     
     def load_test(self):
         return self.test_data.reshape((-1, self.h, self.w, self.c)), self.test_labels
-
-
-
 
 
 

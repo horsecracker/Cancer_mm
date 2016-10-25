@@ -26,14 +26,20 @@ def crop_square(img_file, outfile, target_square_length):
     pix_array[np.where(im_array > 0.05)] = 255
 
     idx_y =np.where(pix_array.any(axis=0))[0]   # remove the black clomn strip 
-    miny,maxy = seg_array(idx_y)                # find breast the border along y    
+    miny,maxy = seg_array(idx_y)
     idx_x = np.where(pix_array[:,miny:maxy].any(axis=1))[0]  # remove 
     minx,maxx = seg_array(idx_x)                             # breast border along x    # get the squre boxes
+
     test = im_array[minx:maxx,miny:maxy]
     im_temp = Image.fromarray(test)
     target_size = (target_square_length, target_square_length)
     im_temp.thumbnail(target_size)
     im_temp.save(outfile+'_0', "png")
+
+    miny = max(0, int(miny*0.35))                # find breast the border along y    
+    maxy = min(int(maxy*1.65), im_array.shape[1])
+    minx = max(0, int(minx*0.9))                # find breast the border along y    
+    maxx = min(int(maxx*1.1), im_array.shape[0])
 
     minx, maxx, miny, maxy = box_square(pix_array,minx, maxx, miny, maxy)
     newimg=im_array[minx:maxx,miny:maxy]
@@ -42,13 +48,46 @@ def crop_square(img_file, outfile, target_square_length):
     im.thumbnail(target_size)
     im.save(outfile, "png")
 
+'''
+def box_square(pix_array, minx, maxx, miny, maxy):
+    # input: bounding of the breast
+    # output: square box out of 10 random boxi choosing the one has most content
+    lenx = maxx-minx
+    leny = maxy-miny
+    max_distortion = 1.2
+    if float(1/max_distortion) < lenx/leny < max_distortion:
+        return minx, maxx, miny, maxy
+    brightness=0
+    n = 10
+    if float(lenx)/float(leny) >= max_distortion:
+    #if maxx-minx > maxy-miny:
+        imgsize = int(leny*max_distortion)
+        for i in range(n):
+            xstart = np.random.randint(minx, maxx-imgsize)
+            bright = np.mean(pix_array[xstart:xstart+imgsize, miny:maxy])
+            if bright > brightness:
+                brightness = bright
+                newx = xstart
+        return newx, newx+imgsize, miny, maxy
+    if float(leny)/float(lenx) >= max_distortion:
+    #if maxx-minx <= maxy-miny:
+        imgsize = int(lenx*max_distortion)
+        for i in range(n):
+            ystart = np.random.randint(miny, maxy-imgsize)
+            bright = np.mean(pix_array[minx:maxx, ystart:ystart+imgsize])
+            if bright > brightness:
+                brightness = bright
+                newy = ystart
+        return minx, maxx, newy, newy+imgsize
+'''
+
 def box_square(pix_array, minx, maxx, miny, maxy):
     # input: bounding of the breast
     # output: square box out of 10 random boxi choosing the one has most content
     if maxx-minx == maxy-miny:
         return minx, maxx, miny, maxy
     brightness=0
-    n = 10
+    n = 20
     if maxx-minx > maxy-miny:
         imgsize = maxy-miny
         for i in range(n):
@@ -62,12 +101,12 @@ def box_square(pix_array, minx, maxx, miny, maxy):
         imgsize = maxx-minx
         for i in range(n):
             ystart = np.random.randint(miny, maxy-maxx+minx)
-            bright = np.mean(pix_array[minx:maxx, ystart:ystart+imgsize])
+            bright = np.mean(pix_array[minx: maxx, ystart: ystart+imgsize])
             if bright > brightness:
                 brightness = bright
                 newy = ystart
         return minx, maxx, newy, newy+imgsize
-
+        
 def seg_array(idx_list):
     # input: idx of the pixel strips where there is nonzero values
     # output: find the biggest pix section
@@ -102,8 +141,8 @@ def crop_all_images_to_max_square(image_dir, target_size):
                 crop_square(full_path, target_full_path, target_size)
 
 
-crop_all_images_to_max_square('train', 256)
-crop_all_images_to_max_square('dev', 256)
+crop_all_images_to_max_square('train', 512)
+#crop_all_images_to_max_square('dev', 256)
 
 
 #crop_all_images_to_max_square('train', 299)
