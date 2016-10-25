@@ -10,9 +10,9 @@ CLASSES = {'0':0, '1':0, '2':0, '3':0, '4':1, '5':1, '6':1, '9':0}
 # DataLoader class: need to customize according to your dataset
 class DensityLoader(object):
     def __init__(self, data_3d = True):
-        self.train_data, self.train_labels = load_density_data('../birads_dataset/train-sq-256/', need_3d = data_3d )
+        self.train_data, self.train_labels = load_density_data('../birads_dataset/train-256/', need_3d = data_3d )
         print(self.train_labels[0:])
-        self.test_data, self.test_labels = load_density_data('../birads_dataset/dev-sq-256/', need_3d = data_3d )
+        self.test_data, self.test_labels = load_density_data('../birads_dataset/dev-256/', need_3d = data_3d )
 
         #self.n_classes = len(set(CLASSES.values()))
 
@@ -28,7 +28,7 @@ class DensityLoader(object):
         self.classes_map = CLASSES
         self.n_classes = len(set(self.classes_map.values()))
         #self.load_small_data_for_debug = FLAGS.load_small_data_for_debug
-        self.should_enforce_class_balance = True #FLAGS.should_enforce_class_balance
+        self.should_enforce_class_balance = False #FLAGS.should_enforce_class_balance
         #self.verbose = FLAGS.verbose
         #self.path_to_image_directory = FLAGS.path_to_image_directory
         #self.MODEL_CLASS = MODEL_CLASS
