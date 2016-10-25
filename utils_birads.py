@@ -97,9 +97,9 @@ class DensityLoader(object):
 
         image_data_new = np.array(image_data_new)
         #additional_data_new = np.array(additional_data_new)
-        data_new = (image_data_new, additional_data_new)
+        #data_new = (image_data_new, additional_data_new)
         labels_new = np.array(labels_new)
-        return data_new, labels_new
+        return image_data_new, labels_new
 
 
     def next_batch(self, batch_size):
