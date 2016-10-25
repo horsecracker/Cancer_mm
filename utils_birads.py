@@ -53,11 +53,11 @@ class DensityLoader(object):
         #self.n_train_examples, self.n_dev_examples, self.n_test_examples = self.train_data[0].shape[0], self.dev_data[0].shape[0], self.test_data[0].shape[0]
         
     def print_label_statistics(self, labels, labels_label):
-    class_count = {key: 0 for key in set(self.classes_map.values())}
-    for label in labels:
-        class_count[np.argmax(label)] += 1
-    print("Class Balance for {}: {}. Total #: {}".format(labels_label, class_count, len(labels)))
-    return class_count
+        class_count = {key: 0 for key in set(self.classes_map.values())}
+        for label in labels:
+            class_count[np.argmax(label)] += 1
+        print("Class Balance for {}: {}. Total #: {}".format(labels_label, class_count, len(labels)))
+        return class_count
 
 
     def print_all_label_statistics(self):
