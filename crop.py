@@ -29,12 +29,18 @@ def crop_square(img_file, outfile, target_square_length):
     miny,maxy = seg_array(idx_y)                # find breast the border along y    
     idx_x = np.where(pix_array[:,miny:maxy].any(axis=1))[0]  # remove 
     minx,maxx = seg_array(idx_x)                             # breast border along x    # get the squre boxes
+    test = im_array[minx:maxx,miny:maxy]
+    im_temp = Image.fromarray(test)
+    target_size = (target_square_length, target_square_length)
+    im_temp.thumbnail(target_size)
+    im_temp.save(outfile+'_0', "png")
+
     minx, maxx, miny, maxy = box_square(pix_array,minx, maxx, miny, maxy)
     newimg=im_array[minx:maxx,miny:maxy]
     im = Image.fromarray(newimg)
     target_size = (target_square_length, target_square_length)
     im.thumbnail(target_size)
-    im.convert("RGB").save(outfile, "JPEG")
+    im.save(outfile, "png")
 
 def box_square(pix_array, minx, maxx, miny, maxy):
     # input: bounding of the breast

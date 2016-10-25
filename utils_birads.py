@@ -10,11 +10,11 @@ CLASSES = {'0':0, '1':0, '2':0, '3':0, '4':1, '5':1, '6':1, '9':0}
 # DataLoader class: need to customize according to your dataset
 class DensityLoader(object):
     def __init__(self, data_3d = True):
-        self.train_data, self.train_labels = load_density_data('../birads_dataset/train-256/', need_3d = data_3d )
+        self.train_data, self.train_labels = load_density_data('../birads_dataset/train-sq-256/', need_3d = data_3d )
         print(self.train_labels[0:])
-        self.test_data, self.test_labels = load_density_data('../birads_dataset/dev-256/', need_3d = data_3d )
+        self.test_data, self.test_labels = load_density_data('../birads_dataset/dev-sq-256/', need_3d = data_3d )
 
-        self.n_classes = len(set(CLASSES.values()))
+        #self.n_classes = len(set(CLASSES.values()))
         self.trainnum = self.train_data.shape[0]
         self.testnum = self.test_data.shape[0]
 
@@ -26,6 +26,31 @@ class DensityLoader(object):
             self.c = 1
         
         self._idx = 0
+
+        self.classes_map = CLASSES
+        self.n_classes = len(set(self.classes_map.values()))
+        #self.load_small_data_for_debug = FLAGS.load_small_data_for_debug
+        self.should_enforce_class_balance = True #FLAGS.should_enforce_class_balance
+        #self.verbose = FLAGS.verbose
+        #self.path_to_image_directory = FLAGS.path_to_image_directory
+        #self.MODEL_CLASS = MODEL_CLASS
+        #self.image_width, self.image_height, self.c = MODEL_CLASS.get_image_dimensions()
+
+        # Load Data
+        #self.load_data_from_metadata()
+
+        self.print_all_label_statistics()
+        if self.should_enforce_class_balance:
+            print("Enforcing Class balance")
+            self.enforce_class_balance()
+            self.print_all_label_statistics()
+
+        
+        #self.training_examples_count = self.train_labels.shape[0]
+        #self.dev_examples_count = self.dev_labels.shape[0]
+        #self.test_examples_count = self.test_labels.shape[0]
+
+        #self.n_train_examples, self.n_dev_examples, self.n_test_examples = self.train_data[0].shape[0], self.dev_data[0].shape[0], self.test_data[0].shape[0]
         
     def next_batch(self, batch_size):
         images_batch = np.zeros((batch_size, self.h, self.w, self.c)) 
@@ -80,3 +105,54 @@ def load_density_data(data_path, need_3d = True):
     print(y.shape)
 
     return X, y
+
+
+
+def print_label_statistics(self, labels, labels_label):
+    class_count = {key: 0 for key in set(self.classes_map.values())}
+    for label in labels:
+        class_count[np.argmax(label)] += 1
+    print("Class Balance for {}: {}. Total #: {}".format(labels_label, class_count, len(labels)))
+    return class_count
+
+
+def print_all_label_statistics(self):
+    self.print_label_statistics(self.train_labels, "Train")
+    #self.print_label_statistics(self.dev_labels, "Dev")
+    self.print_label_statistics(self.test_labels, "Test")
+
+def enforce_class_balance(self):
+    self.train_data, self.train_labels = self.enforce_class_balance_helper(self.train_data, self.train_labels)
+    #self.dev_data, self.dev_labels = self.enforce_class_balance_helper(self.dev_data, self.dev_labels)
+    self.test_data, self.test_labels = self.enforce_class_balance_helper(self.test_data, self.test_labels)
+
+def enforce_class_balance_helper(self, data, labels):
+    class_count = {key: 0 for key in set(self.classes_map.values())}
+    for i in range(labels.shape[0]):
+        label = labels[i][...]
+        class_count[np.argmax(label)] += 1
+    min_class_count = min(class_count.values())
+
+    image_data = data
+    #image_data, additional_data = data
+
+    image_data_new = []
+    #additional_data_new = []
+    labels_new = []
+    for cl, count in class_count.iteritems():
+        label_target = [1 if i == cl else 0 for i in range(len(set(class_count.values())))]
+        indicies = np.where(labels == label_target)[0]
+        indicies = list(set(indicies))
+        cur_count = 0
+        for index in indicies:
+            if cur_count < min_class_count:
+                image_data_new.append(image_data[index][...])
+                #additional_data_new.append(additional_data[index][...])
+                labels_new.append(labels[index][...])
+                cur_count += 1
+
+    image_data_new = np.array(image_data_new)
+    #additional_data_new = np.array(additional_data_new)
+    data_new = (image_data_new, additional_data_new)
+    labels_new = np.array(labels_new)
+    return data_new, labels_new
