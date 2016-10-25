@@ -25,7 +25,7 @@ f.write('using square image, with minimal 16X16, with 512 gap filters\n')
 
 # Parameters
 #learning_rate= 0.0001
-learning_rate = 0.00002
+learning_rate = 0.00001
 training_iters= 20000000
 batch_size = 64
 display_step = 20
