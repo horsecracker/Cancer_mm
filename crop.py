@@ -56,7 +56,7 @@ def box_square(pix_array, minx, maxx, miny, maxy):
         imgsize = maxx-minx
         for i in range(n):
             ystart = np.random.randint(miny, maxy-maxx+minx)
-            bright = np.mean(pix_array[minx, maxx, ystart, ystart+imgsize])
+            bright = np.mean(pix_array[minx:maxx, ystart:ystart+imgsize])
             if bright > brightness:
                 brightness = bright
                 newy = ystart
