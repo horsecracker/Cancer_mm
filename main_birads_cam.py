@@ -25,7 +25,7 @@ f.write('using square image, with minimal 16X16, with 512 gap filters\n')
 
 # Parameters
 #learning_rate= 0.0001
-learning_rate = 0.00001
+learning_rate = 0.00005
 training_iters= 20000000
 batch_size = 64
 display_step = 20
@@ -38,7 +38,7 @@ n_classes = 2 # total classes (0-3)
 #dropout = 0.75 # Dropout, probability to keep units
 dropout = 0.75
 epsilon = 1e-3
-filetern=512
+filetern= 1024
 
 ####### logfile for hyperparameter and output check #########
 f.write('learning rate %f \n' %learning_rate)
@@ -106,7 +106,6 @@ def conv_net(x, keep_prob):
         # Max Pooling (down-sampling)
         conv4 = maxpool2d(conv4, k=2)   #16
     #conv4=tf.nn.dropout(conv4,dropout)
-
     
     with tf.variable_scope('conv5') as scope:
         conv5 = conv2d(conv4, 512)
