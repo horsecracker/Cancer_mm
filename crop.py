@@ -1,5 +1,10 @@
 from PIL import Image
 import os
+import numpy as np
+
+from skimage import io
+import scipy.ndimage
+
 
 def crop_to_max_square(img_file, outfile, target_square_length):
     im = Image.open(img_file)
