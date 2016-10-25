@@ -20,7 +20,7 @@ save_model_name='../checkpoint_file/birads_cam2'
 
 logfile='../logfile/log_birads_cam2.txt'
 f=open(logfile, 'a+')
-f.write('minimal 16X16, with 512 gap filters\n')
+f.write('using square image, with minimal 16X16, with 512 gap filters\n')
 
 
 # Parameters
@@ -52,7 +52,6 @@ keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
 loader = DensityLoader(data_3d = False)
 
 		
-
 
 def conv2d(input_, output_dim, 
            k_h=5, k_w=5, d_h=1, d_w=1, stddev=0.01,
