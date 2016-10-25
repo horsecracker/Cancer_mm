@@ -115,7 +115,7 @@ def conv_net(x, keep_prob):
     #conv4=tf.nn.dropout(conv4,dropout)
     '''
 
-    with tf.variable_scope('conv5') as scope:
+    with tf.variable_scope('conv6') as scope:
         conv6 = conv2d(conv4, filetern, k_h=3, k_w=3)
         # Max Pooling (down-sampling)
         #conv5 = maxpool2d(conv4, k=2)
