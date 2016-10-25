@@ -15,8 +15,6 @@ class DensityLoader(object):
         self.test_data, self.test_labels = load_density_data('../birads_dataset/dev-sq-256/', need_3d = data_3d )
 
         #self.n_classes = len(set(CLASSES.values()))
-        self.trainnum = self.train_data.shape[0]
-        self.testnum = self.test_data.shape[0]
 
         self.h = 256
         self.w = 256
@@ -45,6 +43,8 @@ class DensityLoader(object):
             self.enforce_class_balance()
             self.print_all_label_statistics()
 
+        self.trainnum = self.train_data.shape[0]
+        self.testnum = self.test_data.shape[0]
         
         #self.training_examples_count = self.train_labels.shape[0]
         #self.dev_examples_count = self.dev_labels.shape[0]

@@ -203,7 +203,7 @@ with tf.Session() as sess:
                                               keep_prob: 1.})
                 test_acc_sum+=temp_acc
                 y_true=labels_test[test_step*batch_size:(test_step+1)*batch_size]
-		confu_m=confusion_matrix(np.argmax(y_true,1), np.argmax(yy,1),labels=[0,1,2,3])
+		confu_m=confusion_matrix(np.argmax(y_true,1), np.argmax(yy,1))
                 #if confu_m.shape==(4,4):
 		#print(y_true.shape)
     		#print (confu_m)
