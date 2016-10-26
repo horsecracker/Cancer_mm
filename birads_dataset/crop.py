@@ -23,23 +23,23 @@ def crop_square(img_file, outfile, target_square_length):
     im_array = scipy.ndimage.imread(img_file, mode='L')
 
     pix_array=np.zeros((im_array.shape[0],im_array.shape[1]) )
-    pix_array[np.where(im_array > 0.05)] = 255
+    pix_array[np.where(im_array > 0.01)] = 255
 
     idx_y =np.where(pix_array.any(axis=0))[0]   # remove the black clomn strip 
     miny,maxy = seg_array(idx_y)
     idx_x = np.where(pix_array[:,miny:maxy].any(axis=1))[0]  # remove 
     minx,maxx = seg_array(idx_x)                             # breast border along x    # get the squre boxes
 
+    '''
     test = im_array[minx:maxx,miny:maxy]
     im_temp = Image.fromarray(test)
     target_size = (target_square_length, target_square_length)
     im_temp.thumbnail(target_size)
-    im.convert("RGB").save(outfile+'_0', "JPEG")
+    im_temp.convert("RGB").save(outfile+'_0', "JPEG")
+    '''
 
-    
-
-    miny = max(0, int(miny*0.6))                # find breast the border along y    
-    maxy = min(int(maxy*1.4), im_array.shape[1])
+    miny = max(0, int(miny*0.4))                # find breast the border along y    
+    maxy = min(int(maxy*1.6), im_array.shape[1])
     minx = max(0, int(minx*0.9))                # find breast the border along y    
     maxx = min(int(maxx*1.1), im_array.shape[0])
 
@@ -144,8 +144,8 @@ def crop_all_images_to_max_square(image_dir, target_size):
                 crop_square(full_path, target_full_path, target_size)
 
 
-crop_all_images_to_max_square('train', 256)
-crop_all_images_to_max_square('dev', 256)
+crop_all_images_to_max_square('train', 512)
+crop_all_images_to_max_square('dev', 512)
 
 
 #crop_all_images_to_max_square('train', 299)
