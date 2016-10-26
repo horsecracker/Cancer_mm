@@ -47,8 +47,6 @@ f.write('\n')
 
 # tf Graph input
 x = tf.placeholder(tf.float32, [None, img_size, img_size, 1])
-print(x.get_shape())
-exit()
 y = tf.placeholder(tf.float32, [None, n_classes])
 keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
 loader = DensityLoader(data_3d = False)
