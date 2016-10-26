@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 import scipy.ndimage
 from sklearn.utils import shuffle
+from ImageAugmenter import ImageAugmenter
 
 CLASSES = {'0':0, '1':0, '2':0, '3':0, '4':1, '5':1, '6':1, '9':0}
 # CLASSES = {'1':0, '4':1}
@@ -51,7 +52,18 @@ class DensityLoader(object):
         #self.test_examples_count = self.test_labels.shape[0]
 
         #self.n_train_examples, self.n_dev_examples, self.n_test_examples = self.train_data[0].shape[0], self.dev_data[0].shape[0], self.test_data[0].shape[0]
-        
+        self.augment_training_data = True
+        self.augmenter = ImageAugmenter(self.image_width, self.image_height, # width and height of the image (must be the same for all images in the batch)
+                           hflip=True,    # flip horizontally with 50% probability
+                           vflip=True,
+                           scale_to_percent=1.2, # scale the image to 70%-130% of its original size
+                           scale_axis_equally=False, # allow the axis to be scaled unequally (e.g. x more than y)
+                           rotation_deg=40,    # rotate between -25 and +25 degrees
+                           shear_deg=5,       # shear between -10 and +10 degrees
+                           translation_x_px=20, # translate between -5 and +5 px on the x-axis
+                           translation_y_px=20  # translate between -5 and +5 px on the y-axis
+                           )            
+    
     def print_label_statistics(self, labels, labels_label):
         class_count = {key: 0 for key in set(self.classes_map.values())}
         for label in labels:
@@ -102,7 +114,7 @@ class DensityLoader(object):
         return image_data_new, labels_new
 
 
-    def next_batch(self, batch_size):
+    def next_batch(self, batch_size, data_group='train'):
         images_batch = np.zeros((batch_size, self.h, self.w, self.c)) 
         labels_batch = np.zeros((batch_size, self.n_classes))
         for i in range(batch_size):
@@ -115,6 +127,9 @@ class DensityLoader(object):
                 #self.train_data = shuffle(self.train_data, random_state=20)
                 #self.train_labels = shuffle(self.train_labels, random_state=20)
                 self.train_data,self.train_labels = shuffle(self.train_data,self.train_labels, random_state=20)
+
+        if data_group == 'train' and self.augment_training_data:
+            images_batch = self.augment_images(images_batch)
 
         return images_batch, labels_batch
     

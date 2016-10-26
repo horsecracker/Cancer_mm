@@ -170,7 +170,7 @@ with tf.Session() as sess:
     images_test, labels_test = loader.load_test()
     # Keep training until reach max iterations
     while step * batch_size < training_iters:
-        batch_x, batch_y = loader.next_batch(batch_size)
+        batch_x, batch_y = loader.next_batch(batch_size, 'train')
         # Run optimization op (backprop)
         summary,_=sess.run([merged,optimizer], feed_dict={x: batch_x, y: batch_y,
                                        keep_prob: dropout})
