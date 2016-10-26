@@ -14,11 +14,11 @@ from utils_birads import *
 import numpy as np
 from sklearn.metrics import confusion_matrix
 
-train_log='../tensorboard_out/birads_train_log_cam3'
-test_log='../tensorboard_out/birads_test_log_cam3'
-save_model_name='../checkpoint_file/birads_cam3'
+train_log='../tensorboard_out/birads_train_log_cam4'
+test_log='../tensorboard_out/birads_test_log_cam4'
+save_model_name='../checkpoint_file/birads_cam4'
 
-logfile='../logfile/log_birads_cam3.txt'
+logfile='../logfile/log_birads_cam4.txt'
 f=open(logfile, 'a+')
 f.write('using square image, with minimal 16X16, with 512 gap filters\n')
 
@@ -47,6 +47,8 @@ f.write('\n')
 
 # tf Graph input
 x = tf.placeholder(tf.float32, [None, img_size, img_size, 1])
+print(x.get_shape())
+exit()
 y = tf.placeholder(tf.float32, [None, n_classes])
 keep_prob = tf.placeholder(tf.float32) #dropout (keep probability)
 loader = DensityLoader(data_3d = False)
