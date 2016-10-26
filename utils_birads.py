@@ -129,7 +129,7 @@ def load_density_data(data_path, need_3d = True):
     n_classes = len(set(CLASSES.values()))
     for root, dirs, files in os.walk(data_path):
         for name in files:
-            if name.split('.')[-1] in {'jpg'}:
+            if name.split('.')[-1] in {'jpg', 'png'}:
                 full_path = os.path.join(root, name)
                 # im_gray = scipy.misc.imread(full_path, mode='L')
                 im_gray = scipy.ndimage.imread(full_path, mode='L')

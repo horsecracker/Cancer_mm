@@ -34,19 +34,22 @@ def crop_square(img_file, outfile, target_square_length):
     im_temp = Image.fromarray(test)
     target_size = (target_square_length, target_square_length)
     im_temp.thumbnail(target_size)
-    im_temp.save(outfile+'_0', "png")
+    im.convert("RGB").save(outfile+'_0', "JPEG")
 
-    miny = max(0, int(miny*0.35))                # find breast the border along y    
-    maxy = min(int(maxy*1.65), im_array.shape[1])
+    
+
+    miny = max(0, int(miny*0.6))                # find breast the border along y    
+    maxy = min(int(maxy*1.4), im_array.shape[1])
     minx = max(0, int(minx*0.9))                # find breast the border along y    
     maxx = min(int(maxx*1.1), im_array.shape[0])
+
 
     minx, maxx, miny, maxy = box_square(pix_array,minx, maxx, miny, maxy)
     newimg=im_array[minx:maxx,miny:maxy]
     im = Image.fromarray(newimg)
     target_size = (target_square_length, target_square_length)
     im.thumbnail(target_size)
-    im.save(outfile, "png")
+    im.convert("RGB").save(outfile, "JPEG")
 
 '''
 def box_square(pix_array, minx, maxx, miny, maxy):
@@ -141,8 +144,8 @@ def crop_all_images_to_max_square(image_dir, target_size):
                 crop_square(full_path, target_full_path, target_size)
 
 
-crop_all_images_to_max_square('train', 512)
-#crop_all_images_to_max_square('dev', 256)
+crop_all_images_to_max_square('train', 256)
+crop_all_images_to_max_square('dev', 256)
 
 
 #crop_all_images_to_max_square('train', 299)
