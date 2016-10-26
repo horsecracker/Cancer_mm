@@ -53,7 +53,7 @@ class DensityLoader(object):
 
         #self.n_train_examples, self.n_dev_examples, self.n_test_examples = self.train_data[0].shape[0], self.dev_data[0].shape[0], self.test_data[0].shape[0]
         self.augment_training_data = True
-        self.augmenter = ImageAugmenter(self.image_width, self.image_height, # width and height of the image (must be the same for all images in the batch)
+        self.augmenter = ImageAugmenter(self.w, self.h, # width and height of the image (must be the same for all images in the batch)
                            hflip=True,    # flip horizontally with 50% probability
                            vflip=True,
                            scale_to_percent=1.2, # scale the image to 70%-130% of its original size
