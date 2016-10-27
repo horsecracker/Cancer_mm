@@ -113,6 +113,11 @@ class DensityLoader(object):
         labels_new = np.array(labels_new)
         return image_data_new, labels_new
 
+    def augment_images(self, images):
+        augmented_images = ((images+0.5)*255.0).astype('uint8')
+        augmented_images = self.augmenter.augment_batch(augmented_images) - 0.5
+        return augmented_images
+
 
     def next_batch(self, batch_size, data_group='train'):
         images_batch = np.zeros((batch_size, self.h, self.w, self.c)) 
