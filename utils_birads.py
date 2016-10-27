@@ -10,7 +10,7 @@ CLASSES = {'0':0, '1':0, '2':0, '3':0, '4':1, '5':1, '6':1, '9':0}
 
 # DataLoader class: need to customize according to your dataset
 class DensityLoader(object):
-    def __init__(self, data_3d = True):
+    def __init__(self, logfile, data_3d = True):
         self.train_data, self.train_labels = load_density_data('../birads_dataset/train-sq-512/', need_3d = data_3d )
         print(self.train_labels[0:])
         self.test_data, self.test_labels = load_density_data('../birads_dataset/dev-sq-512/', need_3d = data_3d )
@@ -38,11 +38,11 @@ class DensityLoader(object):
         # Load Data
         #self.load_data_from_metadata()
 
-        self.print_all_label_statistics()
+        self.print_all_label_statistics(logfile)
         if self.should_enforce_class_balance:
             print("Enforcing Class balance")
             self.enforce_class_balance()
-            self.print_all_label_statistics()
+            self.print_all_label_statistics(logfile)
 
         self.trainnum = self.train_data.shape[0]
         self.testnum = self.test_data.shape[0]
@@ -64,18 +64,22 @@ class DensityLoader(object):
                            translation_y_px=20  # translate between -5 and +5 px on the y-axis
                            )            
     
-    def print_label_statistics(self, labels, labels_label):
+    def print_label_statistics(self, labels, logfile, labels_label):
+        f=open(logfile, 'a+')
+
         class_count = {key: 0 for key in set(self.classes_map.values())}
         for label in labels:
             class_count[np.argmax(label)] += 1
         print("Class Balance for {}: {}. Total #: {}".format(labels_label, class_count, len(labels)))
+        f.write("Class Balance for {}: {}. Total #: {}\n ".format(labels_label, class_count, len(labels)))
+        f.close()
         return class_count
 
 
-    def print_all_label_statistics(self):
-        self.print_label_statistics(self.train_labels, "Train")
+    def print_all_label_statistics(self, logfile):
+        self.print_label_statistics(self.train_labels,logfile, "Train")
         #self.print_label_statistics(self.dev_labels, "Dev")
-        self.print_label_statistics(self.test_labels, "Test")
+        self.print_label_statistics(self.test_labels, logfile, "Test")
 
     def enforce_class_balance(self):
         #self.train_data, self.train_labels = self.enforce_class_balance_helper(self.train_data, self.train_labels)
