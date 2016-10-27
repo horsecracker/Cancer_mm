@@ -192,26 +192,30 @@ with tf.Session() as sess:
 
         if step % (display_step*2) == 1:
             test_acc_sum = 0.0
-            test_steps = len(images_test)/batch_size
+            #test_steps = len(images_test)/batch_size+1
  	    confusion_m_all=[]
+            test_steps = loader.testnum/batch_size+1
             for test_step in range(test_steps):
-                temp_acc,yy,summary = sess.run([accuracy,pred,merged], feed_dict={x: images_test[test_step*batch_size:(test_step+1)*batch_size],
-                                              y: labels_test[test_step*batch_size:(test_step+1)*batch_size],
+                start = test_step*batch_size
+                end = min( (test_step+1)*batch_size, loader.testnum-1 )
+
+                temp_acc,yy,summary = sess.run([accuracy,pred,merged], feed_dict={x: images_test[start:end],
+                                              y: labels_test[start:end],
                                               keep_prob: 1.})
-                test_acc_sum+=temp_acc
-                y_true=labels_test[test_step*batch_size:(test_step+1)*batch_size]
+                test_acc_sum+=temp_acc *(end-start)
+                y_true=labels_test[start:end]
 		confu_m=confusion_matrix(np.argmax(y_true,1), np.argmax(yy,1))
                 #if confu_m.shape==(4,4):
 		#print(y_true.shape)
     		#print (confu_m)
  		confusion_m_all.append(confu_m)
                 test_writer.add_summary(summary,step*test_steps+test_step)
-	    print("Test Accuracy: {} \n".format(test_acc_sum/test_steps))
+	    print("Test Accuracy: {} \n".format(test_acc_sum/loader.testnum))
             confusion_m_average=np.sum(confusion_m_all, axis=0)
 	    #if step% 5000==1:
  	    print(confusion_m_average) 
             #f=open(logfile, 'r+')
- 	    f.write("Test Accuracy: {} \n".format(test_acc_sum/test_steps))
+ 	    f.write("Test Accuracy: {} \n".format(test_acc_sum/loader.testnum))
  	    f.write(str(confusion_m_average))
  	    #f.close
 
