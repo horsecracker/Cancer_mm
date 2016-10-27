@@ -52,13 +52,13 @@ class DensityLoader(object):
         #self.test_examples_count = self.test_labels.shape[0]
 
         #self.n_train_examples, self.n_dev_examples, self.n_test_examples = self.train_data[0].shape[0], self.dev_data[0].shape[0], self.test_data[0].shape[0]
-        self.augment_training_data = True
+        self.augment_training_data = False
         self.augmenter = ImageAugmenter(self.w, self.h, # width and height of the image (must be the same for all images in the batch)
                            hflip=True,    # flip horizontally with 50% probability
                            vflip=True,
                            scale_to_percent=1.2, # scale the image to 70%-130% of its original size
                            scale_axis_equally=False, # allow the axis to be scaled unequally (e.g. x more than y)
-                           rotation_deg=40,    # rotate between -25 and +25 degrees
+                           rotation_deg=10,    # rotate between -25 and +25 degrees
                            shear_deg=5,       # shear between -10 and +10 degrees
                            translation_x_px=20, # translate between -5 and +5 px on the x-axis
                            translation_y_px=20  # translate between -5 and +5 px on the y-axis
@@ -143,6 +143,7 @@ class DensityLoader(object):
         return images_batch, labels_batch
     
     def load_test(self):
+        print('test image size of {} :'.format(str(test_data.shape))
         return self.test_data.reshape((-1, self.h, self.w, self.c)), self.test_labels
 
 
