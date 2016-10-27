@@ -143,7 +143,7 @@ class DensityLoader(object):
         return images_batch, labels_batch
     
     def load_test(self):
-        print('test image size of {} :'.format(str(test_data.shape))
+        print('test image size of {} :'.format(str(test_data.shape)))
         return self.test_data.reshape((-1, self.h, self.w, self.c)), self.test_labels
 
 
